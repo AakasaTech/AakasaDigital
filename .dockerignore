@@ -1,0 +1,21 @@
+# Dependencies & build output
+node_modules
+.next
+
+# Dev files
+.env*.local
+.env.development
+
+# Git & tooling
+.git
+.gitignore
+.github
+
+# Docs & local config
+README.md
+*.md
+prompts/
+
+# OS artefacts
+.DS_Store
+Thumbs.db
