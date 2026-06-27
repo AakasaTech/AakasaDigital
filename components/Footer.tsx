@@ -24,9 +24,9 @@ export default function Footer() {
               <Image
                 src="/logo.png"
                 alt="Aakasa Digital"
-                height={30}
-                width={130}
-                style={{ width: 'auto', height: '30px' }}
+                height={96}
+                width={480}
+                className="h-24 w-auto"
               />
             </Link>
             <p className="mt-3 max-w-xs text-sm leading-relaxed text-muted-foreground">

@@ -29,9 +29,9 @@ export default function Header() {
           <Image
             src="/logo.png"
             alt="Aakasa Digital"
-            height={36}
-            width={160}
-            style={{ width: 'auto', height: '36px' }}
+            height={160}
+            width={800}
+            className="h-40 w-auto"
             priority
           />
         </Link>

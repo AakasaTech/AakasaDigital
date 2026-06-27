@@ -1,0 +1,144 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# Aakasa Digital — full-stack docker-compose
+#
+# Services
+#   aakasa-digital  → aakasa.dev / www.aakasa.dev   (port 3001 internal)
+#   billcraft       → billcraft.aakasa.dev           (port 3000 internal)
+#   supportcraft    → supportcraft.aakasa.dev        (port 3002 internal)
+#   nginx           → public HTTP :80 / HTTPS :443
+#
+# Usage
+#   1. Copy .env.docker.example to .env and fill in all values
+#   2. docker compose build          # builds all three Next.js images
+#   3. docker compose up -d          # starts everything
+#   4. docker compose logs -f        # stream logs
+#
+# IMPORTANT: NEXT_PUBLIC_* variables are baked into the image at build time
+# (Next.js inlines them during `next build`). If you change any NEXT_PUBLIC_*
+# value you must rebuild the affected image: docker compose build <service>
+# ─────────────────────────────────────────────────────────────────────────────
+
+services:
+
+  # ── Aakasa Digital — marketing site ─────────────────────────────────────────
+  aakasa-digital:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+    networks:
+      - aakasa-net
+
+  # ── BillCraft AI ─────────────────────────────────────────────────────────────
+  billcraft:
+    build:
+      context: ../BillCraft_AI
+      dockerfile: Dockerfile
+      args:
+        # These are embedded into the JS bundle at build time
+        NEXT_PUBLIC_SUPABASE_URL: ${BILLCRAFT_SUPABASE_URL}
+        NEXT_PUBLIC_SUPABASE_ANON_KEY: ${BILLCRAFT_SUPABASE_ANON_KEY}
+        NEXT_PUBLIC_APP_URL: ${BILLCRAFT_APP_URL}
+        NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: ${BILLCRAFT_STRIPE_PUBLISHABLE_KEY}
+        NEXT_PUBLIC_PAYPAL_CLIENT_ID: ${BILLCRAFT_PAYPAL_CLIENT_ID}
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      # Supabase
+      SUPABASE_SERVICE_ROLE_KEY: ${BILLCRAFT_SUPABASE_SERVICE_ROLE_KEY}
+      # OpenAI
+      OPENAI_API_KEY: ${BILLCRAFT_OPENAI_API_KEY}
+      # Resend
+      RESEND_API_KEY: ${BILLCRAFT_RESEND_API_KEY}
+      RESEND_FROM_EMAIL: ${BILLCRAFT_RESEND_FROM_EMAIL}
+      RESEND_FROM_NAME: ${BILLCRAFT_RESEND_FROM_NAME}
+      # Stripe
+      STRIPE_SECRET_KEY: ${BILLCRAFT_STRIPE_SECRET_KEY}
+      STRIPE_WEBHOOK_SECRET: ${BILLCRAFT_STRIPE_WEBHOOK_SECRET}
+      STRIPE_BASIC_MONTHLY_PRICE_ID: ${BILLCRAFT_STRIPE_BASIC_MONTHLY_PRICE_ID}
+      STRIPE_BASIC_ANNUAL_PRICE_ID: ${BILLCRAFT_STRIPE_BASIC_ANNUAL_PRICE_ID}
+      STRIPE_PRO_MONTHLY_PRICE_ID: ${BILLCRAFT_STRIPE_PRO_MONTHLY_PRICE_ID}
+      STRIPE_PRO_ANNUAL_PRICE_ID: ${BILLCRAFT_STRIPE_PRO_ANNUAL_PRICE_ID}
+      STRIPE_AGENCY_MONTHLY_PRICE_ID: ${BILLCRAFT_STRIPE_AGENCY_MONTHLY_PRICE_ID}
+      STRIPE_AGENCY_ANNUAL_PRICE_ID: ${BILLCRAFT_STRIPE_AGENCY_ANNUAL_PRICE_ID}
+      # PayPal
+      PAYPAL_CLIENT_ID: ${BILLCRAFT_PAYPAL_CLIENT_ID}
+      PAYPAL_CLIENT_SECRET: ${BILLCRAFT_PAYPAL_CLIENT_SECRET}
+      PAYPAL_API_URL: ${BILLCRAFT_PAYPAL_API_URL}
+      PAYPAL_WEBHOOK_ID: ${BILLCRAFT_PAYPAL_WEBHOOK_ID}
+      PAYPAL_BASIC_MONTHLY_PLAN_ID: ${BILLCRAFT_PAYPAL_BASIC_MONTHLY_PLAN_ID}
+      PAYPAL_BASIC_ANNUAL_PLAN_ID: ${BILLCRAFT_PAYPAL_BASIC_ANNUAL_PLAN_ID}
+      PAYPAL_PRO_MONTHLY_PLAN_ID: ${BILLCRAFT_PAYPAL_PRO_MONTHLY_PLAN_ID}
+      PAYPAL_PRO_ANNUAL_PLAN_ID: ${BILLCRAFT_PAYPAL_PRO_ANNUAL_PLAN_ID}
+      PAYPAL_AGENCY_MONTHLY_PLAN_ID: ${BILLCRAFT_PAYPAL_AGENCY_MONTHLY_PLAN_ID}
+      PAYPAL_AGENCY_ANNUAL_PLAN_ID: ${BILLCRAFT_PAYPAL_AGENCY_ANNUAL_PLAN_ID}
+      # Misc
+      PORTAL_SESSION_SECRET: ${BILLCRAFT_PORTAL_SESSION_SECRET}
+      CRON_SECRET: ${BILLCRAFT_CRON_SECRET}
+    networks:
+      - aakasa-net
+
+  # ── SupportCraft AI ──────────────────────────────────────────────────────────
+  supportcraft:
+    build:
+      context: ../SupportCraft_AI
+      dockerfile: Dockerfile
+      args:
+        # These are embedded into the JS bundle at build time
+        NEXT_PUBLIC_SUPABASE_URL: ${SUPPORTCRAFT_SUPABASE_URL}
+        NEXT_PUBLIC_SUPABASE_ANON_KEY: ${SUPPORTCRAFT_SUPABASE_ANON_KEY}
+        NEXT_PUBLIC_APP_URL: ${SUPPORTCRAFT_APP_URL}
+        NEXT_PUBLIC_PAYPAL_CLIENT_ID: ${SUPPORTCRAFT_PAYPAL_CLIENT_ID}
+        NEXT_PUBLIC_PAYPAL_PLAN_ID_PRO: ${SUPPORTCRAFT_PAYPAL_PLAN_ID_PRO}
+        NEXT_PUBLIC_PAYPAL_PLAN_ID_BUSINESS: ${SUPPORTCRAFT_PAYPAL_PLAN_ID_BUSINESS}
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      # Supabase
+      SUPABASE_SERVICE_ROLE_KEY: ${SUPPORTCRAFT_SUPABASE_SERVICE_ROLE_KEY}
+      # AI provider
+      AI_PROVIDER: ${SUPPORTCRAFT_AI_PROVIDER}
+      OPENAI_API_KEY: ${SUPPORTCRAFT_OPENAI_API_KEY}
+      ANTHROPIC_API_KEY: ${SUPPORTCRAFT_ANTHROPIC_API_KEY}
+      # Email
+      EMAIL_PROVIDER: ${SUPPORTCRAFT_EMAIL_PROVIDER}
+      EMAIL_FROM: ${SUPPORTCRAFT_EMAIL_FROM}
+      GMAIL_CLIENT_ID: ${SUPPORTCRAFT_GMAIL_CLIENT_ID}
+      GMAIL_CLIENT_SECRET: ${SUPPORTCRAFT_GMAIL_CLIENT_SECRET}
+      GMAIL_REFRESH_TOKEN: ${SUPPORTCRAFT_GMAIL_REFRESH_TOKEN}
+      RESEND_API_KEY: ${SUPPORTCRAFT_RESEND_API_KEY}
+      RESEND_FROM_EMAIL: ${SUPPORTCRAFT_RESEND_FROM_EMAIL}
+      RESEND_FROM_NAME: ${SUPPORTCRAFT_RESEND_FROM_NAME}
+      # PayPal
+      PAYPAL_CLIENT_ID: ${SUPPORTCRAFT_PAYPAL_CLIENT_ID}
+      PAYPAL_CLIENT_SECRET: ${SUPPORTCRAFT_PAYPAL_CLIENT_SECRET}
+      PAYPAL_WEBHOOK_ID: ${SUPPORTCRAFT_PAYPAL_WEBHOOK_ID}
+      PAYPAL_PLAN_ID_PRO: ${SUPPORTCRAFT_PAYPAL_PLAN_ID_PRO}
+      PAYPAL_PLAN_ID_BUSINESS: ${SUPPORTCRAFT_PAYPAL_PLAN_ID_BUSINESS}
+    networks:
+      - aakasa-net
+
+  # ── Nginx reverse proxy ──────────────────────────────────────────────────────
+  nginx:
+    image: nginx:1.27-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      # Mount SSL certificates here once available:
+      # Place your cert/key files in ./nginx/certs/ then uncomment:
+      # - ./nginx/certs:/etc/nginx/certs:ro
+    depends_on:
+      - aakasa-digital
+      - billcraft
+      - supportcraft
+    networks:
+      - aakasa-net
+
+networks:
+  aakasa-net:
+    driver: bridge
