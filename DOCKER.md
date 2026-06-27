@@ -181,41 +181,36 @@ The nginx config lives at `nginx/nginx.conf`.
 
 ---
 
-## Enabling HTTPS (SSL)
+## HTTPS / SSL
 
-The nginx config includes a commented SSL block ready to activate.
+SSL is active. The nginx config uses `server.crt` and `server.key` from `nginx/certs/`, and all HTTP traffic is automatically redirected to HTTPS (301).
 
-### Option A — Wildcard certificate (recommended)
+```
+nginx/certs/
+├── server.crt    ← certificate (full chain)
+└── server.key    ← private key
+```
 
-If you have a wildcard certificate for `*.aakasa.dev`:
+The certs directory is mounted read-only into the nginx container:
 
-1. Place the certificate and key in `nginx/certs/`:
+```yaml
+volumes:
+  - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+  - ./nginx/certs:/etc/nginx/certs:ro
+```
 
-   ```
-   nginx/certs/
-   ├── aakasa.dev.crt    ← full chain (cert + intermediates)
-   └── aakasa.dev.key    ← private key
-   ```
+To replace the certificate (e.g. on renewal):
 
-2. Uncomment the `certs` volume mount in `docker-compose.yml`:
-
-   ```yaml
-   volumes:
-     - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-     - ./nginx/certs:/etc/nginx/certs:ro     # ← uncomment this line
-   ```
-
-3. Uncomment the `server { listen 443 ... }` blocks and the HTTP→HTTPS redirect in `nginx/nginx.conf`.
-
-4. Reload nginx:
+1. Drop the new `server.crt` and `server.key` into `nginx/certs/`.
+2. Reload nginx without restarting the container:
 
    ```bash
    docker compose exec nginx nginx -s reload
    ```
 
-### Option B — Let's Encrypt with Certbot
+### Let's Encrypt / Certbot
 
-Run Certbot in a separate container alongside nginx and use its webroot or DNS-01 challenge. Refer to the [nginx + certbot Docker guide](https://mindsers.blog/en/post/https-using-nginx-certbot-docker/).
+To automate renewal, run Certbot in a separate container using the DNS-01 or webroot challenge, output the cert as `server.crt` / `server.key`, and hook `nginx -s reload` into the post-renewal hook.
 
 ---
 
