@@ -4,6 +4,7 @@ interface ProductCardProps {
   name: string;
   tagline: string;
   description: string;
+  features?: string[];
   url: string;
   cta: string;
   icon: React.ReactNode;
@@ -15,6 +16,7 @@ export default function ProductCard({
   name,
   tagline,
   description,
+  features,
   url,
   cta,
   icon,
@@ -50,7 +52,22 @@ export default function ProductCard({
       >
         {tagline}
       </p>
-      <p className="mt-3 flex-1 text-sm leading-relaxed text-muted-foreground">{description}</p>
+      <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{description}</p>
+
+      {features && features.length > 0 && (
+        <ul className="mt-4 flex-1 space-y-1.5">
+          {features.map((f) => (
+            <li key={f} className="flex items-start gap-2 text-sm text-muted-foreground">
+              <span
+                className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full"
+                style={{ background: gradient }}
+                aria-hidden="true"
+              />
+              {f}
+            </li>
+          ))}
+        </ul>
+      )}
 
       <a
         href={url}

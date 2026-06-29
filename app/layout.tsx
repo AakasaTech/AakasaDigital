@@ -19,6 +19,15 @@ export const metadata: Metadata = {
     'small business',
     'freelancer tools',
   ],
+  icons: {
+    icon: [
+      { url: '/favicon.ico',        sizes: 'any' },
+      { url: '/favicon-16x16.png',  sizes: '16x16', type: 'image/png' },
+      { url: '/favicon-32x32.png',  sizes: '32x32', type: 'image/png' },
+    ],
+    apple: { url: '/apple-touch-icon.png' },
+    other: [{ rel: 'manifest', url: '/site.webmanifest' }],
+  },
   openGraph: {
     type:        'website',
     locale:      'en_US',
@@ -26,11 +35,13 @@ export const metadata: Metadata = {
     siteName:    'Aakasa Digital',
     title:       'Aakasa Digital | Practical SaaS & AI-Powered Business Software',
     description: 'Aakasa Digital builds SaaS and AI-powered software products for freelancers, startups, and small businesses.',
+    images: [{ url: '/android-chrome-512x512.png', width: 512, height: 512 }],
   },
   twitter: {
     card:        'summary_large_image',
     title:       'Aakasa Digital | Practical SaaS & AI-Powered Business Software',
     description: 'Aakasa Digital builds SaaS and AI-powered software products for freelancers, startups, and small businesses.',
+    images:      ['/android-chrome-512x512.png'],
   },
   metadataBase: new URL('https://aakasa.dev'),
 };

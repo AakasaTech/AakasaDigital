@@ -30,7 +30,14 @@ const products = [
     name:        'SupportCraft AI',
     tagline:     'Smarter Support for Growing Businesses',
     description:
-      'Manage support tickets, customer conversations, priorities, and team workflows with an AI-assisted help desk platform.',
+      'A full-featured AI help desk — tickets, email, customer portal, knowledge base, and team management — all in one platform.',
+    features: [
+      'AI-suggested replies & auto-categorisation',
+      'Inbound & outbound email (no SMTP setup needed)',
+      'Customer self-service portal',
+      'Knowledge base with rich article editor',
+      'Team roles, assignments & real-time updates',
+    ],
     url:      'https://supportcraft.aakasa.dev',
     cta:      'Visit SupportCraft AI',
     icon:     <HeadphonesIcon className="h-6 w-6" />,

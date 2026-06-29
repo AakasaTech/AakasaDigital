@@ -100,6 +100,7 @@ services:
       NODE_ENV: production
       # Supabase
       SUPABASE_SERVICE_ROLE_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZrb2JwcmtteWNkYm5iemt3aHdtIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4MjM5NjYyOSwiZXhwIjoyMDk3OTcyNjI5fQ.gD8UPEpNbMr5-hecDsPUJABUij2lJchFCzAMlJEZlo8"
+      INBOUND_SECRET: "42c10eba6dca8a53837b0f7b9d6ef012039d0baecf7fd1e757b89881ed965be5"
       # AI provider
       AI_PROVIDER: "openai"
       OPENAI_API_KEY: "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"

@@ -26,7 +26,17 @@ const products = [
     name:        'SupportCraft AI',
     tagline:     'Smarter Support for Growing Businesses',
     description:
-      'Manage support tickets, customer conversations, priorities, and team workflows with an AI-assisted help desk platform. Built for freelancers, startups, and small businesses who want to deliver great customer support.',
+      'A complete AI-powered help desk for freelancers, startups, and small businesses. Handle every customer conversation — from email to portal — without stitching together separate tools.',
+    features: [
+      'Ticket management with status, priority & assignments',
+      'AI-suggested replies, auto-categorisation & summaries (GPT-4o / Claude)',
+      'Dedicated support email — acme@supportcraft.aakasa.dev — no SMTP setup',
+      'Customer self-service portal to submit & track tickets',
+      'Knowledge base with rich editor, categories & AI-assisted search',
+      'Team management with owner / admin / agent roles',
+      'Real-time ticket thread updates',
+      'Flexible billing — Pro & Business plans via PayPal',
+    ],
     url:      'https://supportcraft.aakasa.dev',
     cta:      'Visit SupportCraft AI',
     icon:     <HeadphonesIcon className="h-6 w-6" />,
