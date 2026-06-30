@@ -28,6 +28,7 @@ services:
     restart: unless-stopped
     environment:
       NODE_ENV: production
+      RESEND_API_KEY: "re_bub9EXLX_DAAicUKB2HBkZ1ttaYMjD3cq"
     networks:
       - aakasa-net
 
