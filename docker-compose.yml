@@ -75,6 +75,12 @@ services:
       PAYPAL_PRO_ANNUAL_PLAN_ID: "P-1AY77886454160936NI55OXY"
       PAYPAL_AGENCY_MONTHLY_PLAN_ID: "P-7XG21989SK317174GNI55QIQ"
       PAYPAL_AGENCY_ANNUAL_PLAN_ID: "P-16J209028R683783XNI55QZY"
+      # Google OAuth
+      # GOOGLE_AUTH_FLOW: "custom"   → shows billcraft.aakasa.dev on account chooser (default)
+      # GOOGLE_AUTH_FLOW: "supabase" → delegates to Supabase provider (use after enabling custom domain on Pro)
+      GOOGLE_AUTH_FLOW: "custom"
+      GOOGLE_CLIENT_ID: "1061796696253-m7oebigqst10aq5kki4f3n40cie79elb.apps.googleusercontent.com"
+      GOOGLE_CLIENT_SECRET: "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"
       # Misc
       PORTAL_SESSION_SECRET: "ya0rri0161n8wjocmw9ypnlwy8snzlcg"
       CRON_SECRET: ${BILLCRAFT_CRON_SECRET}
