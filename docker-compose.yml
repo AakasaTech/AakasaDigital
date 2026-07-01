@@ -86,12 +86,6 @@ services:
       CRON_SECRET: "70d81a77f60be7778790ad15662b7b1e5d1762345ecedc00196e39adc9d0f30a"
       ADMIN_EMAILS: "brayan@aakasa.dev"
       EMAIL_PROVIDER: "resend"
-    command: >
-      /bin/sh -c "
-        apk add --no-cache curl &&
-        echo '0 8 * * * curl -sf -H \"Authorization: Bearer $$CRON_SECRET\" https://billcraft.aakasa.dev/api/cron/send-reminders' | crontab - &&
-        crond -f -l 2
-      "
     networks:
       - aakasa-net
 
