@@ -7,6 +7,15 @@ export const metadata: Metadata = {
   title: 'About',
   description:
     'Learn about Aakasa Digital — a software company building practical SaaS and AI-powered products for modern businesses.',
+  openGraph: {
+    title:       'About Aakasa Digital',
+    description: 'Learn about Aakasa Digital — a software company building practical SaaS and AI-powered products for modern businesses.',
+    url:         'https://aakasa.dev/about',
+  },
+  twitter: {
+    title:       'About Aakasa Digital',
+    description: 'Learn about Aakasa Digital — a software company building practical SaaS and AI-powered products for modern businesses.',
+  },
 };
 
 const values = [

@@ -4,8 +4,18 @@ import PageHeader from '@/components/PageHeader';
 import ContactForm from '@/components/ContactForm';
 
 export const metadata: Metadata = {
-  title: 'Contact',
-  description: 'Get in touch with the Aakasa Digital team.',
+  title: 'Contact Us',
+  description:
+    'Get in touch with Aakasa Digital. Ask about our products, partnerships, or anything else — we typically respond within 1–2 business days.',
+  openGraph: {
+    title:       'Contact Us | Aakasa Digital',
+    description: 'Get in touch with Aakasa Digital. Ask about our products, partnerships, or anything else — we typically respond within 1–2 business days.',
+    url:         'https://aakasa.dev/contact',
+  },
+  twitter: {
+    title:       'Contact Us | Aakasa Digital',
+    description: 'Get in touch with Aakasa Digital. Ask about our products, partnerships, or anything else — we typically respond within 1–2 business days.',
+  },
 };
 
 const contactInfo = [

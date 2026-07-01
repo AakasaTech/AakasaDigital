@@ -7,7 +7,16 @@ import CTASection from '@/components/CTASection';
 export const metadata: Metadata = {
   title: 'Products',
   description:
-    'Explore Aakasa Digital\'s AI-powered SaaS products for billing, invoicing, and customer support.',
+    "Explore Aakasa Digital's AI-powered SaaS products — BillCraft AI for invoicing and BillCraft AI for customer support. Built for freelancers, startups, and small businesses.",
+  openGraph: {
+    title:       'Products | Aakasa Digital',
+    description: "Explore Aakasa Digital's AI-powered SaaS products — BillCraft AI for invoicing and SupportCraft AI for customer support.",
+    url:         'https://aakasa.dev/products',
+  },
+  twitter: {
+    title:       'Products | Aakasa Digital',
+    description: "Explore Aakasa Digital's AI-powered SaaS products — BillCraft AI for invoicing and SupportCraft AI for customer support.",
+  },
 };
 
 const products = [
