@@ -48,7 +48,7 @@ export default function TermsPage() {
             <ul className="list-disc space-y-2 pl-5">
               <li>You must register for an account to access most features. You agree to provide accurate, current, and complete information and to keep it up to date.</li>
               <li>You are responsible for maintaining the confidentiality of your login credentials and for all activity that occurs under your account.</li>
-              <li>You must notify us immediately at{' '}<a href="mailto:hello@aakasa.dev" className="text-primary hover:underline">hello@aakasa.dev</a>{' '}if you suspect any unauthorised access to your account.</li>
+              <li>You must notify us immediately at{' '}<a href="mailto:legal@aakasa.dev" className="text-primary hover:underline">legal@aakasa.dev</a>{' '}if you suspect any unauthorised access to your account.</li>
               <li>We reserve the right to disable accounts that violate these Terms or that have been inactive for an extended period, with reasonable notice where practicable.</li>
             </ul>
           </div>
@@ -272,8 +272,8 @@ export default function TermsPage() {
             <address className="mt-3 not-italic">
               <strong className="text-foreground">Aakasa Digital (Pvt) Ltd</strong><br />
               Sri Lanka<br />
-              <a href="mailto:hello@aakasa.dev" className="text-primary hover:underline">
-                hello@aakasa.dev
+              <a href="mailto:legal@aakasa.dev" className="text-primary hover:underline">
+                legal@aakasa.dev
               </a>
             </address>
           </div>

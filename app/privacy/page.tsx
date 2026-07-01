@@ -168,8 +168,8 @@ export default function PrivacyPage() {
             </ul>
             <p className="mt-3">
               To exercise any of these rights, contact us at{' '}
-              <a href="mailto:hello@aakasa.dev" className="text-primary hover:underline">
-                hello@aakasa.dev
+              <a href="mailto:privacy@aakasa.dev" className="text-primary hover:underline">
+                privacy@aakasa.dev
               </a>
               . We will respond within 30 days.
             </p>
@@ -217,8 +217,8 @@ export default function PrivacyPage() {
             <address className="mt-3 not-italic">
               <strong className="text-foreground">Aakasa Digital (Pvt) Ltd</strong><br />
               Sri Lanka<br />
-              <a href="mailto:hello@aakasa.dev" className="text-primary hover:underline">
-                hello@aakasa.dev
+              <a href="mailto:privacy@aakasa.dev" className="text-primary hover:underline">
+                privacy@aakasa.dev
               </a>
             </address>
           </div>
