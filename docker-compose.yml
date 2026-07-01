@@ -143,8 +143,11 @@ services:
       PAYPAL_PLAN_ID_PRO_YEARLY: "P-3ML00298HU3691007NJB7URI"
       PAYPAL_PLAN_ID_BUSINESS_YEARLY: "P-96F27768NK747754BNJB7VBI"
       PAYPAL_PLAN_ID_AGENCY_YEARLY: "P-22T60596EP922525SNJB7VRY"
+      # Google OAuth (Sign-In)
+      GOOGLE_CLIENT_ID: "852419689327-jmug6djo9mujfnqagr6kep5uhnopr4r9.apps.googleusercontent.com"
+      GOOGLE_CLIENT_SECRET: "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"
       # Misc
-      CRON_SECRET: ${SUPPORTCRAFT_CRON_SECRET}
+      CRON_SECRET: "6ffc7661cabfcf188b0de8d93088b6e6adff73ab566dcd8ed8bfe0855a6c600a"
       ADMIN_EMAILS: "brayan@aakasa.dev"
     networks:
       - aakasa-net
