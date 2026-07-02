@@ -3,6 +3,51 @@ import { FileText, HeadphonesIcon, Package, Sparkles } from 'lucide-react';
 import PageHeader from '@/components/PageHeader';
 import ProductCard from '@/components/ProductCard';
 import CTASection from '@/components/CTASection';
+import JsonLd from '@/components/JsonLd';
+
+const billcraftSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: 'BillCraft AI',
+  applicationCategory: 'BusinessApplication',
+  operatingSystem: 'Web',
+  url: 'https://billcraft.aakasa.dev',
+  description:
+    'AI-powered invoicing and billing platform. Create invoices, manage customers, track payments, and automate billing workflows — built for freelancers, consultants, and small businesses.',
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'USD',
+    description: 'Free trial available. Paid plans for advanced features.',
+  },
+  author: {
+    '@type': 'Organization',
+    name: 'Aakasa Digital',
+    url: 'https://aakasa.dev',
+  },
+};
+
+const supportcraftSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: 'SupportCraft AI',
+  applicationCategory: 'BusinessApplication',
+  operatingSystem: 'Web',
+  url: 'https://supportcraft.aakasa.dev',
+  description:
+    'AI-powered help desk for freelancers, startups, and small businesses. Manage tickets, email, customer portal, knowledge base, and team workflows — all in one platform.',
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'USD',
+    description: 'Free trial available. Pro and Business plans via PayPal.',
+  },
+  author: {
+    '@type': 'Organization',
+    name: 'Aakasa Digital',
+    url: 'https://aakasa.dev',
+  },
+};
 
 export const metadata: Metadata = {
   title: 'Products',
@@ -63,6 +108,7 @@ const upcoming = [
 export default function ProductsPage() {
   return (
     <>
+      <JsonLd schema={[billcraftSchema, supportcraftSchema]} />
       <PageHeader
         badge="All Products"
         title="Our Software Products"

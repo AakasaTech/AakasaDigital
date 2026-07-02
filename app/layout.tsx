@@ -1,7 +1,36 @@
 import type { Metadata } from 'next';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import JsonLd from '@/components/JsonLd';
 import './globals.css';
+
+const organizationSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'Aakasa Digital',
+  alternateName: 'Aakasa Digital (Pvt) Ltd',
+  url: 'https://aakasa.dev',
+  logo: 'https://aakasa.dev/logo.png',
+  description:
+    'Aakasa Digital builds practical SaaS and AI-powered software products for freelancers, startups, and small businesses.',
+  email: 'hello@aakasa.dev',
+  contactPoint: {
+    '@type': 'ContactPoint',
+    email: 'hello@aakasa.dev',
+    contactType: 'customer support',
+    availableLanguage: 'English',
+  },
+  // Add social profile URLs to sameAs when accounts are created:
+  // e.g. 'https://twitter.com/aakasadigital', 'https://linkedin.com/company/aakasadigital'
+  sameAs: [],
+};
+
+const websiteSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'Aakasa Digital',
+  url: 'https://aakasa.dev',
+};
 
 export const metadata: Metadata = {
   title: {
@@ -58,6 +87,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
           rel="stylesheet"
         />
+        <JsonLd schema={[organizationSchema, websiteSchema]} />
       </head>
       <body className="antialiased">
         {/* Skip to main content — keyboard navigation a11y */}
