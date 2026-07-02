@@ -44,10 +44,17 @@ WORKDIR /app
 
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
+# PM2 state directory — must be writable by the non-root nextjs user
+ENV PM2_HOME=/tmp/.pm2
 
-# Dedicated non-root user/group for runtime security
+# Install PM2 process manager (runs as root before user switch)
+RUN npm install -g pm2@latest --no-fund --no-audit
+
+# Dedicated non-root user/group + PM2 home directory
 RUN addgroup --system --gid 1001 nodejs \
- && adduser  --system --uid 1001 nextjs
+ && adduser  --system --uid 1001 nextjs \
+ && mkdir -p /tmp/.pm2 \
+ && chown -R nextjs:nodejs /tmp/.pm2
 
 # Static public assets
 COPY --from=builder /app/public ./public
@@ -61,6 +68,9 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 # Static client assets (JS/CSS chunks)
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
+# PM2 ecosystem config
+COPY --chown=nextjs:nodejs ecosystem.config.js ./
+
 USER nextjs
 
 EXPOSE 3001
@@ -68,4 +78,4 @@ EXPOSE 3001
 ENV PORT=3001
 ENV HOSTNAME="0.0.0.0"
 
-CMD ["node", "server.js"]
+CMD ["pm2-runtime", "start", "ecosystem.config.js"]
