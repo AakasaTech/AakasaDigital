@@ -113,6 +113,8 @@ services:
     restart: unless-stopped
     environment:
       NODE_ENV: production
+      # App URL — also needed at runtime by server-side routes (auth callbacks, invitation emails)
+      NEXT_PUBLIC_APP_URL: "https://supportcraft.aakasa.dev"
       # Supabase
       SUPABASE_SERVICE_ROLE_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZrb2JwcmtteWNkYm5iemt3aHdtIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4MjM5NjYyOSwiZXhwIjoyMDk3OTcyNjI5fQ.gD8UPEpNbMr5-hecDsPUJABUij2lJchFCzAMlJEZlo8"
       INBOUND_SECRET: "42c10eba6dca8a53837b0f7b9d6ef012039d0baecf7fd1e757b89881ed965be5"
@@ -122,6 +124,7 @@ services:
       ANTHROPIC_API_KEY: "aaa"
       # Email
       EMAIL_PROVIDER: "resend"
+      SENDING_DOMAIN: "supportcraft.aakasa.dev"
       EMAIL_FROM: "supportcraft@aakasa.dev"
       GMAIL_CLIENT_ID: "419756706827-ubf2djt62lq2k46p9cmf4atcpi81dgb1.apps.googleusercontent.com"
       GMAIL_CLIENT_SECRET: "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"
