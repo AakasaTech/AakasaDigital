@@ -2,8 +2,8 @@ import Link from 'next/link';
 import Image from 'next/image';
 
 const products = [
-  { label: 'BillCraft AI', href: 'https://billcraft.aakasa.dev' },
-  { label: 'SupportCraft AI', href: 'https://supportcraft.aakasa.dev' },
+  { label: 'BillCraft AI — AI-powered invoicing', href: 'https://billcraft.aakasa.dev' },
+  { label: 'SupportCraft AI — AI help desk', href: 'https://supportcraft.aakasa.dev' },
 ];
 
 const companyLinks = [
