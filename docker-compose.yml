@@ -5,6 +5,7 @@
 #   aakasa-digital  → aakasa.dev / www.aakasa.dev   (port 3001 internal)
 #   billcraft       → billcraft.aakasa.dev           (port 3000 internal)
 #   supportcraft    → supportcraft.aakasa.dev        (port 3002 internal)
+#   taskcraft       → taskcraft.aakasa.dev           (port 3003 internal)
 #   nginx           → public HTTP :80 / HTTPS :443
 #
 # Usage
@@ -155,6 +156,43 @@ services:
     networks:
       - aakasa-net
 
+  # ── TaskCraft AI ─────────────────────────────────────────────────────────────
+  taskcraft:
+    build:
+      context: ../TaskCraft_AI
+      dockerfile: Dockerfile
+      args:
+        # These are embedded into the JS bundle at build time
+        NEXT_PUBLIC_SUPABASE_URL: "https://aiuobinwyywcqplflyqz.supabase.co"
+        NEXT_PUBLIC_SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFpdW9iaW53eXl3Y3FwbGZseXF6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMwNTg2NDgsImV4cCI6MjA5ODYzNDY0OH0.1ntNsWvzX2jlFGljKJR-UDar1B-LeErVUpn4RpMFC0w"
+        NEXT_PUBLIC_APP_URL: "https://taskcraft.aakasa.dev"
+        NEXT_PUBLIC_PAYPAL_CLIENT_ID: "BAAo_zAcqFHBIpk4qErmJXv6tHTuR5xFjyrKF12k1iNY6-vyz_IB2QRP1PgbfyeNhXRC4xMkhQEw_05SaU"
+        # Plan IDs baked into JS bundle for PayPal subscription buttons
+        NEXT_PUBLIC_PAYPAL_PLAN_ID_SOLO_MONTHLY: "P-5RS62283GN226741RNJD5HOY"
+        NEXT_PUBLIC_PAYPAL_PLAN_ID_SOLO_YEARLY: "P-5FA46031BH181530BNJD5IGQ"
+        NEXT_PUBLIC_PAYPAL_PLAN_ID_TEAM_MONTHLY: "P-9YW22138HW0130325NJD5HZI"
+        NEXT_PUBLIC_PAYPAL_PLAN_ID_TEAM_YEARLY: "P-2BM328175E004452HNJD5IQA"
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      # Supabase
+      SUPABASE_SERVICE_ROLE_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFpdW9iaW53eXl3Y3FwbGZseXF6Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4MzA1ODY0OCwiZXhwIjoyMDk4NjM0NjQ4fQ.gLWwaTZzvCNGRAGEuua2UBunTobBUko0IyBb6iIjhZo"
+      # PayPal
+      PAYPAL_CLIENT_ID: "BAAo_zAcqFHBIpk4qErmJXv6tHTuR5xFjyrKF12k1iNY6-vyz_IB2QRP1PgbfyeNhXRC4xMkhQEw_05SaU"
+      PAYPAL_CLIENT_SECRET: "EPbdOEL56jXz7lTWrh3iI8IONz2JFr72FFrIwsPNR3WZ84Bxq-BvVnseKTeUygSE7QPxMY4HNgRmAvsS"
+      PAYPAL_API_URL: "https://api-m.paypal.com"
+      PAYPAL_WEBHOOK_ID: "4FL55530DP533162Y"
+      # Server-side plan IDs (used by webhook to map subscription → DB plan)
+      PAYPAL_PLAN_ID_SOLO_MONTHLY: "P-5RS62283GN226741RNJD5HOY"
+      PAYPAL_PLAN_ID_SOLO_YEARLY: "P-5FA46031BH181530BNJD5IGQ"
+      PAYPAL_PLAN_ID_TEAM_MONTHLY: "P-9YW22138HW0130325NJD5HZI"
+      PAYPAL_PLAN_ID_TEAM_YEARLY: "P-2BM328175E004452HNJD5IQA"
+      # Misc
+      ADMIN_EMAILS: "brayan@aakasa.dev"
+      CRON_SECRET: "70d81a77f60be7778790ad15662b7b1e5d1762345ecedc00196e39adc9d0f30a"
+    networks:
+      - aakasa-net
+
   # ── Nginx reverse proxy ──────────────────────────────────────────────────────
   nginx:
     image: nginx:1.27-alpine
@@ -169,6 +207,7 @@ services:
       - aakasa-digital
       - billcraft
       - supportcraft
+      - taskcraft
     networks:
       - aakasa-net
 
