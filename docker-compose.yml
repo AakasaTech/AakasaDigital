@@ -195,6 +195,10 @@ services:
       # Misc
       ADMIN_EMAILS: "brayan@aakasa.dev"
       CRON_SECRET: "70d81a77f60be7778790ad15662b7b1e5d1762345ecedc00196e39adc9d0f30a"
+      # Email
+      RESEND_API_KEY: "re_bub9EXLX_DAAicUKB2HBkZ1ttaYMjD3cq"
+      RESEND_FROM_EMAIL: "taskcraft@aakasa.dev"
+      RESEND_FROM_NAME: "TaskCraft AI"
     networks:
       - aakasa-net
 
