@@ -190,6 +190,7 @@ services:
       PAYPAL_PLAN_ID_TEAM_MONTHLY: "P-9YW22138HW0130325NJD5HZI"
       PAYPAL_PLAN_ID_TEAM_YEARLY: "P-2BM328175E004452HNJD5IQA"
       # Google OAuth (custom PKCE flow)
+      GOOGLE_AUTH_FLOW: "custom"
       GOOGLE_CLIENT_ID: "626524144963-agd5fh31cgnhgsrh63uj7ugq83lio4tb.apps.googleusercontent.com"
       GOOGLE_CLIENT_SECRET: "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"
       # Misc
