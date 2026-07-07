@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { FileText, HeadphonesIcon, Package, Sparkles } from 'lucide-react';
+import { ClipboardList, FileText, HeadphonesIcon, Package, Sparkles } from 'lucide-react';
 import PageHeader from '@/components/PageHeader';
 import ProductCard from '@/components/ProductCard';
 import CTASection from '@/components/CTASection';
@@ -49,18 +49,41 @@ const supportcraftSchema = {
   },
 };
 
+const taskcraftSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: 'TaskCraft AI',
+  applicationCategory: 'BusinessApplication',
+  operatingSystem: 'Web',
+  url: 'https://taskcraft.aakasa.dev',
+  description:
+    'AI-powered task, project, and time-tracking platform for freelancers, consultants, and small teams. Plan projects, track time, and convert billable hours to invoices in one click.',
+  offers: {
+    '@type': 'AggregateOffer',
+    lowPrice: '0',
+    highPrice: '19',
+    priceCurrency: 'USD',
+    description: 'Free plan available. Solo $9/month, Team $19/month.',
+  },
+  author: {
+    '@type': 'Organization',
+    name: 'Aakasa Digital',
+    url: 'https://aakasa.dev',
+  },
+};
+
 export const metadata: Metadata = {
   title: 'Products',
   description:
-    "Explore Aakasa Digital's AI-powered SaaS products — BillCraft AI for invoicing and BillCraft AI for customer support. Built for freelancers, startups, and small businesses.",
+    "Explore Aakasa Digital's AI-powered SaaS products — BillCraft AI for invoicing, SupportCraft AI for customer support, and TaskCraft AI for task and time tracking. Built for freelancers, startups, and small businesses.",
   openGraph: {
     title:       'Products | Aakasa Digital',
-    description: "Explore Aakasa Digital's AI-powered SaaS products — BillCraft AI for invoicing and SupportCraft AI for customer support.",
+    description: "Explore Aakasa Digital's AI-powered SaaS products — BillCraft AI, SupportCraft AI, and TaskCraft AI. Built for freelancers, startups, and small businesses.",
     url:         'https://aakasa.dev/products',
   },
   twitter: {
     title:       'Products | Aakasa Digital',
-    description: "Explore Aakasa Digital's AI-powered SaaS products — BillCraft AI for invoicing and SupportCraft AI for customer support.",
+    description: "Explore Aakasa Digital's AI-powered SaaS products — BillCraft AI, SupportCraft AI, and TaskCraft AI. Built for freelancers, startups, and small businesses.",
   },
 };
 
@@ -97,18 +120,39 @@ const products = [
     gradient: 'linear-gradient(135deg, #38BDF8 0%, #0EA5E9 100%)',
     badge:    'Live',
   },
+  {
+    name:        'TaskCraft AI',
+    tagline:     'Plan smarter. Track faster. Invoice instantly.',
+    description:
+      'A unified task, project, and time-tracking platform for freelancers, consultants, and small teams. Manage projects, log billable hours with one-click timers, and push tracked time directly to BillCraft AI as a ready-to-send invoice.',
+    features: [
+      'Task & project management with milestones and priorities',
+      'Time tracking with live timers and manual entry',
+      'AI assistant for task creation, summaries & workload insights',
+      'One-click invoice export to BillCraft AI',
+      'SupportCraft AI integration — convert support tickets into tasks',
+      'Team workspaces with roles, permissions & activity feed',
+      'Reports, calendar view & client management',
+      'Free / Solo $9 / Team $19 per month',
+    ],
+    url:      'https://taskcraft.aakasa.dev',
+    cta:      'Visit TaskCraft AI',
+    icon:     <ClipboardList className="h-6 w-6" />,
+    gradient: 'linear-gradient(135deg, #A78BFA 0%, #7C3AED 100%)',
+    badge:    'Live',
+  },
 ];
 
 const upcoming = [
-  { name: 'ProjectCraft AI', description: 'AI-powered project management for small teams.' },
   { name: 'HireCraft AI', description: 'Streamlined applicant tracking and hiring workflows.' },
   { name: 'ReportCraft AI', description: 'Business analytics and reporting in plain language.' },
+  { name: 'StoreCraft AI', description: 'Lightweight e-commerce and order management for small sellers.' },
 ];
 
 export default function ProductsPage() {
   return (
     <>
-      <JsonLd schema={[billcraftSchema, supportcraftSchema]} />
+      <JsonLd schema={[billcraftSchema, supportcraftSchema, taskcraftSchema]} />
       <PageHeader
         badge="All Products"
         title="Our Software Products"
@@ -119,7 +163,7 @@ export default function ProductsPage() {
       <section className="px-6 py-20">
         <div className="mx-auto max-w-7xl">
           <h2 className="mb-10 text-xl font-bold text-foreground">Available Now</h2>
-          <div className="grid gap-8 sm:grid-cols-2">
+          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
             {products.map((product) => (
               <ProductCard key={product.name} {...product} />
             ))}

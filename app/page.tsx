@@ -5,6 +5,7 @@ import {
   TrendingUp,
   Wrench,
   Smile,
+  ClipboardList,
   FileText,
   HeadphonesIcon,
   Globe,
@@ -42,6 +43,24 @@ const products = [
     cta:      'Visit SupportCraft AI',
     icon:     <HeadphonesIcon className="h-6 w-6" />,
     gradient: 'linear-gradient(135deg, #38BDF8 0%, #0EA5E9 100%)',
+    badge:    'Live',
+  },
+  {
+    name:        'TaskCraft AI',
+    tagline:     'Plan smarter. Track faster. Invoice instantly.',
+    description:
+      'Task, project, and time-tracking built for freelancers and small teams. Log hours, manage projects with AI assistance, and push billable time directly to BillCraft AI as an invoice.',
+    features: [
+      'Task & project management with milestones',
+      'Live timers and manual time entry',
+      'AI assistant for task creation & summaries',
+      'One-click invoice export to BillCraft AI',
+      'Team workspaces — Free / Solo $9 / Team $19',
+    ],
+    url:      'https://taskcraft.aakasa.dev',
+    cta:      'Visit TaskCraft AI',
+    icon:     <ClipboardList className="h-6 w-6" />,
+    gradient: 'linear-gradient(135deg, #A78BFA 0%, #7C3AED 100%)',
     badge:    'Live',
   },
 ];
@@ -99,7 +118,7 @@ export default function HomePage() {
               Practical AI-powered tools that simplify your business operations.
             </p>
           </div>
-          <div className="mt-14 grid gap-8 sm:grid-cols-2">
+          <div className="mt-14 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
             {products.map((product) => (
               <ProductCard key={product.name} {...product} />
             ))}
@@ -153,7 +172,7 @@ export default function HomePage() {
                 — all from one company you can trust.
               </p>
               <div className="mt-6 flex flex-wrap gap-2">
-                {['Billing & Invoicing', 'Customer Support', 'Productivity', 'Operations', 'Analytics', 'More coming…'].map(
+                {['Billing & Invoicing', 'Customer Support', 'Task & Time Tracking', 'Productivity', 'Operations', 'More coming…'].map(
                   (tag) => (
                     <span
                       key={tag}
