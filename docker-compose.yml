@@ -205,6 +205,7 @@ services:
       RESEND_FROM_NAME: "TaskCraft AI"
       # Internal Docker service URLs — bypasses nginx/public hostname for container-to-container calls
       BILLCRAFT_INTERNAL_URL: "http://billcraft:3000/api"
+      SUPPORTCRAFT_INTERNAL_URL: "http://supportcraft:3002/api/v1"
     networks:
       - aakasa-net
 
