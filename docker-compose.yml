@@ -45,6 +45,8 @@ services:
         NEXT_PUBLIC_APP_URL: "https://billcraft.aakasa.dev"
         NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: ""
         NEXT_PUBLIC_PAYPAL_CLIENT_ID: "ARf81xjokXCKWDGo9AyrhNgbTq1hgj6uoA6RAoR24rl0oxeqoWq9eZaHze8qRFv90fu94Lo9vaR4laRB"
+        # ALLOWED_ORIGINS must be a build arg — next.config.ts reads it at `next build` time
+        ALLOWED_ORIGINS: "billcraft.aakasa.dev,taskcraft.aakasa.dev,supportcraft.aakasa.dev,localhost:3000,localhost:3001,localhost:3002,localhost:3003"
     restart: unless-stopped
     environment:
       NODE_ENV: production
@@ -201,6 +203,8 @@ services:
       RESEND_API_KEY: "re_bub9EXLX_DAAicUKB2HBkZ1ttaYMjD3cq"
       RESEND_FROM_EMAIL: "taskcraft@aakasa.dev"
       RESEND_FROM_NAME: "TaskCraft AI"
+      # Internal Docker service URLs — bypasses nginx/public hostname for container-to-container calls
+      BILLCRAFT_INTERNAL_URL: "http://billcraft:3000/api"
     networks:
       - aakasa-net
 
