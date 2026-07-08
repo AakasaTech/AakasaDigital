@@ -87,6 +87,7 @@ services:
       CRON_SECRET: "70d81a77f60be7778790ad15662b7b1e5d1762345ecedc00196e39adc9d0f30a"
       ADMIN_EMAILS: "brayan@aakasa.dev"
       EMAIL_PROVIDER: "resend"
+      ALLOWED_ORIGINS: "billcraft.aakasa.dev,taskcraft.aakasa.dev,supportcraft.aakasa.dev,localhost:3000,localhost:3001,localhost:3002,localhost:3003"
     networks:
       - aakasa-net
 
