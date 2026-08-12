@@ -6,6 +6,7 @@
 #   billcraft       → billcraft.aakasa.dev           (port 3000 internal)
 #   supportcraft    → supportcraft.aakasa.dev        (port 3002 internal)
 #   taskcraft       → taskcraft.aakasa.dev           (port 3003 internal)
+#   pdfcraft        → pdfcraft.aakasa.dev            (port 3004 internal)
 #   nginx           → public HTTP :80 / HTTPS :443
 #
 # Usage
@@ -209,6 +210,21 @@ services:
     networks:
       - aakasa-net
 
+  # ── PDF Merge ────────────────────────────────────────────────────────────────
+  # Entirely client-side PDF processing — no database, no secrets. The only
+  # build-time value is the canonical app URL used for metadata/OG tags.
+  pdfcraft:
+    build:
+      context: ../PDFCraft
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_APP_URL: "https://pdfcraft.aakasa.dev"
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+    networks:
+      - aakasa-net
+
   # ── Nginx reverse proxy ──────────────────────────────────────────────────────
   nginx:
     image: nginx:1.27-alpine
@@ -224,6 +240,7 @@ services:
       - billcraft
       - supportcraft
       - taskcraft
+      - pdfcraft
     networks:
       - aakasa-net
 
