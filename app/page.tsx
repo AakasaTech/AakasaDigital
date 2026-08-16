@@ -7,6 +7,7 @@ import {
   Smile,
   ClipboardList,
   FileText,
+  FileStack,
   HeadphonesIcon,
   Globe,
 } from 'lucide-react';
@@ -61,6 +62,24 @@ const products = [
     cta:      'Visit TaskCraft AI',
     icon:     <ClipboardList className="h-6 w-6" />,
     gradient: 'linear-gradient(135deg, #A78BFA 0%, #7C3AED 100%)',
+    badge:    'Live',
+  },
+  {
+    name:        'PDFCraft',
+    tagline:     'Every PDF tool you need, right in your browser.',
+    description:
+      'Merge, split, organize, convert, compress, and sign PDF files — entirely client-side, with nothing ever uploaded to a server.',
+    features: [
+      'Merge, split & organize pages',
+      'Convert images to PDF & back',
+      'Lossless compression, no uploads',
+      'Draw or type a signature',
+      '100% client-side — files never leave your browser',
+    ],
+    url:      'https://pdfcraft.aakasa.dev',
+    cta:      'Visit PDFCraft',
+    icon:     <FileStack className="h-6 w-6" />,
+    gradient: 'linear-gradient(135deg, #0A1C50 0%, #1D8CFF 100%)',
     badge:    'Live',
   },
 ];
