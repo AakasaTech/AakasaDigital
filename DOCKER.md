@@ -1,29 +1,22 @@
 # Docker Deployment — Aakasa Digital
 
-This guide covers building and running the full Aakasa Digital stack with Docker Compose, including the marketing site, both SaaS products, and an nginx reverse proxy.
+This guide covers building and running the full Aakasa Digital stack with Docker Compose: the marketing site, four SaaS products, and an nginx reverse proxy.
 
 ---
 
 ## Architecture
 
 ```
-                         ┌─────────────────────────────────────────┐
-                         │            nginx  :80 / :443            │
-                         └────────────┬──────────┬────────────┬────┘
-                                      │          │            │
-              aakasa.dev              │          │            │  billcraft.aakasa.dev
-              www.aakasa.dev          ▼          │            ▼
-                         ┌──────────────────┐   │   ┌──────────────────┐
-                         │  aakasa-digital  │   │   │    billcraft     │
-                         │   (port 3001)    │   │   │   (port 3000)    │
-                         └──────────────────┘   │   └──────────────────┘
-                                                │
-                              supportcraft.aakasa.dev
-                                                ▼
-                                   ┌──────────────────┐
-                                   │   supportcraft   │
-                                   │   (port 3002)    │
-                                   └──────────────────┘
+                                   ┌───────────────────────┐
+                                   │     nginx  :80/:443    │
+                                   └───┬───┬───┬───┬───┬────┘
+                                       │   │   │   │   │
+                    aakasa.dev/www ────┘   │   │   │   └──── pdfcraft.aakasa.dev
+              billcraft.aakasa.dev ────────┘   │   └──────── taskcraft.aakasa.dev
+                                                └──────────── supportcraft.aakasa.dev
+
+  aakasa-digital (3001)   billcraft (3000)   supportcraft (3002)
+  taskcraft (3003)        pdfcraft (3004)
 ```
 
 All containers run on an internal Docker bridge network (`aakasa-net`). Only nginx is exposed to the host on ports 80 and 443.
@@ -33,13 +26,15 @@ All containers run on an internal Docker bridge network (`aakasa-net`). Only ngi
 ## Prerequisites
 
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/) 24+ (or Docker Engine + Compose v2)
-- All three project directories present side-by-side:
+- All five project directories present side-by-side:
 
 ```
 work/aakasatech/
 ├── AakasaDigital/      ← this repo (docker-compose.yml lives here)
 ├── BillCraft_AI/
-└── SupportCraft_AI/
+├── SupportCraft_AI/
+├── TaskCraft_AI/
+└── PDFCraft/
 ```
 
 ---
@@ -66,6 +61,8 @@ To build a single service (e.g. after a code change):
 ```bash
 docker compose build billcraft
 docker compose build supportcraft
+docker compose build taskcraft
+docker compose build pdfcraft
 docker compose build aakasa-digital
 ```
 
@@ -90,6 +87,8 @@ NAME                STATUS          PORTS
 aakasa-digital      running
 billcraft           running
 supportcraft        running
+taskcraft           running
+pdfcraft            running
 nginx               running         0.0.0.0:80->80/tcp, 0.0.0.0:443->443/tcp
 ```
 
@@ -102,6 +101,8 @@ docker compose logs -f
 # Single service
 docker compose logs -f billcraft
 docker compose logs -f supportcraft
+docker compose logs -f taskcraft
+docker compose logs -f pdfcraft
 docker compose logs -f nginx
 ```
 
@@ -113,8 +114,11 @@ Copy `.env.docker.example` to `.env`. The file uses prefixed names to keep all v
 
 | Prefix | Service |
 |---|---|
+| `AAKASA_` | Aakasa Digital |
 | `BILLCRAFT_` | BillCraft AI |
 | `SUPPORTCRAFT_` | SupportCraft AI |
+| `TASKCRAFT_` | TaskCraft AI |
+| `PDFCRAFT_` | PDFCraft |
 
 ### BillCraft AI
 
@@ -137,8 +141,13 @@ Copy `.env.docker.example` to `.env`. The file uses prefixed names to keep all v
 | `BILLCRAFT_PAYPAL_API_URL` | `https://api-m.paypal.com` (live) or sandbox URL |
 | `BILLCRAFT_PAYPAL_WEBHOOK_ID` | PayPal webhook ID |
 | `BILLCRAFT_PAYPAL_*_PLAN_ID` | Six PayPal plan IDs (basic/pro/agency × monthly/annual) |
+| `BILLCRAFT_GOOGLE_AUTH_FLOW` | `custom` (default, own-domain consent screen) or `supabase` |
+| `BILLCRAFT_GOOGLE_CLIENT_ID` / `_SECRET` | Google OAuth client for Sign-In |
 | `BILLCRAFT_PORTAL_SESSION_SECRET` | 32-char random secret for client portal cookies |
 | `BILLCRAFT_CRON_SECRET` | Secret for authenticating cron job requests |
+| `BILLCRAFT_ADMIN_EMAILS` | Comma-separated emails allowed into `/admin` |
+| `BILLCRAFT_EMAIL_PROVIDER` | `resend` |
+| `BILLCRAFT_ALLOWED_ORIGINS` | Comma-separated hostnames allowed to call this app's API *(build arg)* |
 
 ### SupportCraft AI
 
@@ -162,8 +171,42 @@ Copy `.env.docker.example` to `.env`. The file uses prefixed names to keep all v
 | `SUPPORTCRAFT_PAYPAL_CLIENT_ID` | PayPal client ID *(build arg + runtime)* |
 | `SUPPORTCRAFT_PAYPAL_CLIENT_SECRET` | PayPal client secret |
 | `SUPPORTCRAFT_PAYPAL_WEBHOOK_ID` | PayPal webhook ID |
-| `SUPPORTCRAFT_PAYPAL_PLAN_ID_PRO` | PayPal Pro plan ID *(build arg + runtime)* |
-| `SUPPORTCRAFT_PAYPAL_PLAN_ID_BUSINESS` | PayPal Business plan ID *(build arg + runtime)* |
+| `SUPPORTCRAFT_PAYPAL_PLAN_ID_PUBLIC_*` | Eight client-side plan IDs *(build args, baked into the PayPal buttons)* |
+| `SUPPORTCRAFT_PAYPAL_PLAN_ID_*` | Eight server-side plan IDs (webhook → DB plan mapping) — **not the same values** as the `_PUBLIC_` set above |
+| `SUPPORTCRAFT_INBOUND_SECRET` | Shared secret verifying the inbound-email webhook |
+| `SUPPORTCRAFT_GOOGLE_CLIENT_ID` / `_SECRET` | Google OAuth client for Sign-In |
+| `SUPPORTCRAFT_CRON_SECRET` | Secret for authenticating cron job requests |
+| `SUPPORTCRAFT_ADMIN_EMAILS` | Comma-separated emails allowed into `/admin` |
+
+### TaskCraft AI
+
+| Variable | Description |
+|---|---|
+| `TASKCRAFT_SUPABASE_URL` | Supabase project URL |
+| `TASKCRAFT_SUPABASE_ANON_KEY` | Supabase anon/public key *(build arg)* |
+| `TASKCRAFT_SUPABASE_SERVICE_ROLE_KEY` | Supabase service role key (server-only) |
+| `TASKCRAFT_APP_URL` | Public URL e.g. `https://taskcraft.aakasa.dev` *(build arg)* |
+| `TASKCRAFT_OPENAI_API_KEY` | OpenAI API key |
+| `TASKCRAFT_PAYPAL_CLIENT_ID` | PayPal client ID *(build arg + runtime)* |
+| `TASKCRAFT_PAYPAL_CLIENT_SECRET` | PayPal client secret |
+| `TASKCRAFT_PAYPAL_WEBHOOK_ID` | PayPal webhook ID |
+| `TASKCRAFT_PAYPAL_PLAN_ID_*` | Four PayPal plan IDs (solo/team × monthly/yearly) — same value used for both the build arg and runtime var in this app |
+| `TASKCRAFT_GOOGLE_AUTH_FLOW` | `custom` (default, own-domain consent screen) or `supabase` |
+| `TASKCRAFT_GOOGLE_CLIENT_ID` / `_SECRET` | Google OAuth client for Sign-In |
+| `TASKCRAFT_ADMIN_EMAILS` | Comma-separated emails allowed into `/admin` |
+| `TASKCRAFT_CRON_SECRET` | Secret for authenticating cron job requests |
+| `TASKCRAFT_RESEND_API_KEY` | Resend API key for transactional email |
+| `TASKCRAFT_RESEND_FROM_EMAIL` / `_FROM_NAME` | Sender identity |
+
+`BILLCRAFT_INTERNAL_URL` / `SUPPORTCRAFT_INTERNAL_URL` (container-to-container URLs TaskCraft calls directly — `http://billcraft:3000/api` / `http://supportcraft:3002/api/v1` — bypassing nginx and the public hostname) are not secrets and are set as literals directly in `docker-compose.yml`, not sourced from `.env`.
+
+### PDFCraft
+
+| Variable | Description |
+|---|---|
+| `PDFCRAFT_APP_URL` | Public URL e.g. `https://pdfcraft.aakasa.dev` *(build arg)* |
+
+Entirely client-side PDF processing — no database, no other secrets.
 
 ---
 
@@ -176,6 +219,8 @@ The nginx config lives at `nginx/nginx.conf`.
 | `aakasa.dev`, `www.aakasa.dev` | `aakasa-digital` | 3001 |
 | `billcraft.aakasa.dev` | `billcraft` | 3000 |
 | `supportcraft.aakasa.dev` | `supportcraft` | 3002 |
+| `taskcraft.aakasa.dev` | `taskcraft` | 3003 |
+| `pdfcraft.aakasa.dev` | `pdfcraft` | 3004 |
 
 `www.aakasa.dev` automatically redirects to `aakasa.dev` (301).
 
@@ -247,7 +292,7 @@ After pushing new code to any project:
 
 ```bash
 # Rebuild the image
-docker compose build <service>   # billcraft | supportcraft | aakasa-digital
+docker compose build <service>   # billcraft | supportcraft | taskcraft | pdfcraft | aakasa-digital
 
 # Swap the container with zero downtime (single-replica)
 docker compose up -d --no-deps <service>

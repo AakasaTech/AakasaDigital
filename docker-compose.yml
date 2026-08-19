@@ -5,19 +5,24 @@
 #   aakasa-digital  → aakasa.dev / www.aakasa.dev   (port 3001 internal)
 #   billcraft       → billcraft.aakasa.dev           (port 3000 internal)
 #   supportcraft    → supportcraft.aakasa.dev        (port 3002 internal)
-#   taskcraft       → taskcraft.aakasa.dev           (port 3003 internal)
-#   pdfcraft        → pdfcraft.aakasa.dev            (port 3004 internal)
+#   taskcraft       → taskcraft.aakasa.dev            (port 3003 internal)
+#   pdfcraft        → pdfcraft.aakasa.dev             (port 3004 internal)
+#   meetingcraft    → meetingcraft.aakasa.dev          (port 3000 internal)
+#   meetingcraft-worker → same image, BullMQ reminder worker, no exposed port
 #   nginx           → public HTTP :80 / HTTPS :443
 #
 # Usage
 #   1. Copy .env.docker.example to .env and fill in all values
-#   2. docker compose build          # builds all three Next.js images
+#   2. docker compose build          # builds all five Next.js images
 #   3. docker compose up -d          # starts everything
 #   4. docker compose logs -f        # stream logs
 #
 # IMPORTANT: NEXT_PUBLIC_* variables are baked into the image at build time
 # (Next.js inlines them during `next build`). If you change any NEXT_PUBLIC_*
 # value you must rebuild the affected image: docker compose build <service>
+#
+# All values below are read from `.env` (gitignored — see .env.docker.example
+# for the template). Nothing in this file should ever be a literal secret.
 # ─────────────────────────────────────────────────────────────────────────────
 
 services:
@@ -30,7 +35,7 @@ services:
     restart: unless-stopped
     environment:
       NODE_ENV: production
-      RESEND_API_KEY: "re_bub9EXLX_DAAicUKB2HBkZ1ttaYMjD3cq"
+      RESEND_API_KEY: ${AAKASA_RESEND_API_KEY}
     networks:
       - aakasa-net
 
@@ -41,24 +46,24 @@ services:
       dockerfile: Dockerfile
       args:
         # These are embedded into the JS bundle at build time
-        NEXT_PUBLIC_SUPABASE_URL: "https://fxsgecorvogbgszhroxt.supabase.co"
-        NEXT_PUBLIC_SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ4c2dlY29ydm9nYmdzemhyb3h0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxNzc2ODEsImV4cCI6MjA5Nzc1MzY4MX0.O2ymEkByLWR8BUZqtUn5eUhf5_lR4bgUe_EvNvXMDcQ"
-        NEXT_PUBLIC_APP_URL: "https://billcraft.aakasa.dev"
-        NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: ""
-        NEXT_PUBLIC_PAYPAL_CLIENT_ID: "BAAo_zAcqFHBIpk4qErmJXv6tHTuR5xFjyrKF12k1iNY6-vyz_IB2QRP1PgbfyeNhXRC4xMkhQEw_05SaU"
+        NEXT_PUBLIC_SUPABASE_URL: ${BILLCRAFT_SUPABASE_URL}
+        NEXT_PUBLIC_SUPABASE_ANON_KEY: ${BILLCRAFT_SUPABASE_ANON_KEY}
+        NEXT_PUBLIC_APP_URL: ${BILLCRAFT_APP_URL}
+        NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: ${BILLCRAFT_STRIPE_PUBLISHABLE_KEY}
+        NEXT_PUBLIC_PAYPAL_CLIENT_ID: ${BILLCRAFT_PAYPAL_CLIENT_ID}
         # ALLOWED_ORIGINS must be a build arg — next.config.ts reads it at `next build` time
-        ALLOWED_ORIGINS: "billcraft.aakasa.dev,taskcraft.aakasa.dev,supportcraft.aakasa.dev,localhost:3000,localhost:3001,localhost:3002,localhost:3003"
+        ALLOWED_ORIGINS: ${BILLCRAFT_ALLOWED_ORIGINS}
     restart: unless-stopped
     environment:
       NODE_ENV: production
       # Supabase
-      SUPABASE_SERVICE_ROLE_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ4c2dlY29ydm9nYmdzemhyb3h0Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4MjE3NzY4MSwiZXhwIjoyMDk3NzUzNjgxfQ.KXEPFwS3I0-uczIXIGIz-XrDjGoOXmuLOz6LPhPXWQc"
+      SUPABASE_SERVICE_ROLE_KEY: ${BILLCRAFT_SUPABASE_SERVICE_ROLE_KEY}
       # OpenAI
-      OPENAI_API_KEY: "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"
+      OPENAI_API_KEY: ${BILLCRAFT_OPENAI_API_KEY}
       # Resend
-      RESEND_API_KEY: "re_bub9EXLX_DAAicUKB2HBkZ1ttaYMjD3cq"
-      RESEND_FROM_EMAIL: "billcraft@aakasa.dev"
-      RESEND_FROM_NAME: "BillCraft AI"
+      RESEND_API_KEY: ${BILLCRAFT_RESEND_API_KEY}
+      RESEND_FROM_EMAIL: ${BILLCRAFT_RESEND_FROM_EMAIL}
+      RESEND_FROM_NAME: ${BILLCRAFT_RESEND_FROM_NAME}
       # Stripe
       STRIPE_SECRET_KEY: ${BILLCRAFT_STRIPE_SECRET_KEY}
       STRIPE_WEBHOOK_SECRET: ${BILLCRAFT_STRIPE_WEBHOOK_SECRET}
@@ -69,28 +74,28 @@ services:
       STRIPE_AGENCY_MONTHLY_PRICE_ID: ${BILLCRAFT_STRIPE_AGENCY_MONTHLY_PRICE_ID}
       STRIPE_AGENCY_ANNUAL_PRICE_ID: ${BILLCRAFT_STRIPE_AGENCY_ANNUAL_PRICE_ID}
       # PayPal
-      PAYPAL_CLIENT_ID: "BAAo_zAcqFHBIpk4qErmJXv6tHTuR5xFjyrKF12k1iNY6-vyz_IB2QRP1PgbfyeNhXRC4xMkhQEw_05SaU"
-      PAYPAL_CLIENT_SECRET: "EPbdOEL56jXz7lTWrh3iI8IONz2JFr72FFrIwsPNR3WZ84Bxq-BvVnseKTeUygSE7QPxMY4HNgRmAvsS"
-      PAYPAL_API_URL: "https://api-m.paypal.com"
-      PAYPAL_WEBHOOK_ID: "94H61696K8675145Y"
-      PAYPAL_BASIC_MONTHLY_PLAN_ID: "P-7K8674745C429590BNJD2ABA"
-      PAYPAL_BASIC_ANNUAL_PLAN_ID: "P-87071821U3255845RNJD2ERI"
-      PAYPAL_PRO_MONTHLY_PLAN_ID: "P-1VV48990KY658560NNJD2AYQ"
-      PAYPAL_PRO_ANNUAL_PLAN_ID: "P-4VD02241UJ183431SNJD2FAI"
-      PAYPAL_AGENCY_MONTHLY_PLAN_ID: "P-97E718048B344404BNJD2DQY"
-      PAYPAL_AGENCY_ANNUAL_PLAN_ID: "P-98J05710F2308881YNJD2FPI"
+      PAYPAL_CLIENT_ID: ${BILLCRAFT_PAYPAL_CLIENT_ID}
+      PAYPAL_CLIENT_SECRET: ${BILLCRAFT_PAYPAL_CLIENT_SECRET}
+      PAYPAL_API_URL: ${BILLCRAFT_PAYPAL_API_URL}
+      PAYPAL_WEBHOOK_ID: ${BILLCRAFT_PAYPAL_WEBHOOK_ID}
+      PAYPAL_BASIC_MONTHLY_PLAN_ID: ${BILLCRAFT_PAYPAL_BASIC_MONTHLY_PLAN_ID}
+      PAYPAL_BASIC_ANNUAL_PLAN_ID: ${BILLCRAFT_PAYPAL_BASIC_ANNUAL_PLAN_ID}
+      PAYPAL_PRO_MONTHLY_PLAN_ID: ${BILLCRAFT_PAYPAL_PRO_MONTHLY_PLAN_ID}
+      PAYPAL_PRO_ANNUAL_PLAN_ID: ${BILLCRAFT_PAYPAL_PRO_ANNUAL_PLAN_ID}
+      PAYPAL_AGENCY_MONTHLY_PLAN_ID: ${BILLCRAFT_PAYPAL_AGENCY_MONTHLY_PLAN_ID}
+      PAYPAL_AGENCY_ANNUAL_PLAN_ID: ${BILLCRAFT_PAYPAL_AGENCY_ANNUAL_PLAN_ID}
       # Google OAuth
       # GOOGLE_AUTH_FLOW: "custom"   → shows billcraft.aakasa.dev on account chooser (default)
       # GOOGLE_AUTH_FLOW: "supabase" → delegates to Supabase provider (use after enabling custom domain on Pro)
-      GOOGLE_AUTH_FLOW: "custom"
-      GOOGLE_CLIENT_ID: "1061796696253-m7oebigqst10aq5kki4f3n40cie79elb.apps.googleusercontent.com"
-      GOOGLE_CLIENT_SECRET: "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"
+      GOOGLE_AUTH_FLOW: ${BILLCRAFT_GOOGLE_AUTH_FLOW}
+      GOOGLE_CLIENT_ID: ${BILLCRAFT_GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${BILLCRAFT_GOOGLE_CLIENT_SECRET}
       # Misc
-      PORTAL_SESSION_SECRET: "ya0rri0161n8wjocmw9ypnlwy8snzlcg"
-      CRON_SECRET: "70d81a77f60be7778790ad15662b7b1e5d1762345ecedc00196e39adc9d0f30a"
-      ADMIN_EMAILS: "brayan@aakasa.dev"
-      EMAIL_PROVIDER: "resend"
-      ALLOWED_ORIGINS: "billcraft.aakasa.dev,taskcraft.aakasa.dev,supportcraft.aakasa.dev,localhost:3000,localhost:3001,localhost:3002,localhost:3003"
+      PORTAL_SESSION_SECRET: ${BILLCRAFT_PORTAL_SESSION_SECRET}
+      CRON_SECRET: ${BILLCRAFT_CRON_SECRET}
+      ADMIN_EMAILS: ${BILLCRAFT_ADMIN_EMAILS}
+      EMAIL_PROVIDER: ${BILLCRAFT_EMAIL_PROVIDER}
+      ALLOWED_ORIGINS: ${BILLCRAFT_ALLOWED_ORIGINS}
     networks:
       - aakasa-net
 
@@ -101,62 +106,75 @@ services:
       dockerfile: Dockerfile
       args:
         # These are embedded into the JS bundle at build time
-        NEXT_PUBLIC_SUPABASE_URL: "https://fkobprkmycdbnbzkwhwm.supabase.co"
-        NEXT_PUBLIC_SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZrb2JwcmtteWNkYm5iemt3aHdtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIzOTY2MjksImV4cCI6MjA5Nzk3MjYyOX0.1pdcxKWrwjcA1dckVxIV7TcDxl3PjOf5_u8WoSanBD8"
-        NEXT_PUBLIC_APP_URL: "https://supportcraft.aakasa.dev"
-        NEXT_PUBLIC_PAYPAL_CLIENT_ID: "BAAo_zAcqFHBIpk4qErmJXv6tHTuR5xFjyrKF12k1iNY6-vyz_IB2QRP1PgbfyeNhXRC4xMkhQEw_05SaU"
+        NEXT_PUBLIC_SUPABASE_URL: ${SUPPORTCRAFT_SUPABASE_URL}
+        NEXT_PUBLIC_SUPABASE_ANON_KEY: ${SUPPORTCRAFT_SUPABASE_ANON_KEY}
+        NEXT_PUBLIC_APP_URL: ${SUPPORTCRAFT_APP_URL}
+        NEXT_PUBLIC_PAYPAL_CLIENT_ID: ${SUPPORTCRAFT_PAYPAL_CLIENT_ID}
         # Monthly plan IDs (baked into JS bundle for PayPal button)
-        NEXT_PUBLIC_PAYPAL_PLAN_ID_FREELANCER_MONTHLY: "P-6DW12014FU6799839NJD2GWA"
-        NEXT_PUBLIC_PAYPAL_PLAN_ID_PRO: "P-874266741U837583NNJD2HBQ"
-        NEXT_PUBLIC_PAYPAL_PLAN_ID_BUSINESS: "P-1J781087UJ0681943NJD2HMI"
-        NEXT_PUBLIC_PAYPAL_PLAN_ID_AGENCY: "P-19U091991P357371UNJD2HYI"
+        NEXT_PUBLIC_PAYPAL_PLAN_ID_FREELANCER_MONTHLY: ${SUPPORTCRAFT_PAYPAL_PLAN_ID_PUBLIC_FREELANCER_MONTHLY}
+        NEXT_PUBLIC_PAYPAL_PLAN_ID_PRO: ${SUPPORTCRAFT_PAYPAL_PLAN_ID_PUBLIC_PRO}
+        NEXT_PUBLIC_PAYPAL_PLAN_ID_BUSINESS: ${SUPPORTCRAFT_PAYPAL_PLAN_ID_PUBLIC_BUSINESS}
+        NEXT_PUBLIC_PAYPAL_PLAN_ID_AGENCY: ${SUPPORTCRAFT_PAYPAL_PLAN_ID_PUBLIC_AGENCY}
         # Yearly plan IDs
-        NEXT_PUBLIC_PAYPAL_PLAN_ID_FREELANCER_YEARLY: "P-4ML2886837112771HNJD2ITQ"
-        NEXT_PUBLIC_PAYPAL_PLAN_ID_PRO_YEARLY: "P-5KC04555RC240213CNJD2I7Y"
-        NEXT_PUBLIC_PAYPAL_PLAN_ID_BUSINESS_YEARLY: "P-4VP77725DG942223VNJD2JMI"
-        NEXT_PUBLIC_PAYPAL_PLAN_ID_AGENCY_YEARLY: "P-9W739439HW469291WNJD2J6A"
+        NEXT_PUBLIC_PAYPAL_PLAN_ID_FREELANCER_YEARLY: ${SUPPORTCRAFT_PAYPAL_PLAN_ID_PUBLIC_FREELANCER_YEARLY}
+        NEXT_PUBLIC_PAYPAL_PLAN_ID_PRO_YEARLY: ${SUPPORTCRAFT_PAYPAL_PLAN_ID_PUBLIC_PRO_YEARLY}
+        NEXT_PUBLIC_PAYPAL_PLAN_ID_BUSINESS_YEARLY: ${SUPPORTCRAFT_PAYPAL_PLAN_ID_PUBLIC_BUSINESS_YEARLY}
+        NEXT_PUBLIC_PAYPAL_PLAN_ID_AGENCY_YEARLY: ${SUPPORTCRAFT_PAYPAL_PLAN_ID_PUBLIC_AGENCY_YEARLY}
     restart: unless-stopped
     environment:
       NODE_ENV: production
       # App URL — also needed at runtime by server-side routes (auth callbacks, invitation emails)
-      NEXT_PUBLIC_APP_URL: "https://supportcraft.aakasa.dev"
-      # Supabase
-      SUPABASE_SERVICE_ROLE_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZrb2JwcmtteWNkYm5iemt3aHdtIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4MjM5NjYyOSwiZXhwIjoyMDk3OTcyNjI5fQ.gD8UPEpNbMr5-hecDsPUJABUij2lJchFCzAMlJEZlo8"
-      INBOUND_SECRET: "42c10eba6dca8a53837b0f7b9d6ef012039d0baecf7fd1e757b89881ed965be5"
+      NEXT_PUBLIC_APP_URL: ${SUPPORTCRAFT_APP_URL}
+      # Database (Neon) — auth/orgs/tickets-read live here; the inbound email
+      # pipeline still writes to the Supabase Postgres below until it migrates too
+      DATABASE_URL: ${SUPPORTCRAFT_DATABASE_URL}
+      # NextAuth
+      NEXTAUTH_SECRET: ${SUPPORTCRAFT_NEXTAUTH_SECRET}
+      NEXTAUTH_URL: ${SUPPORTCRAFT_APP_URL}
+      # File storage (Cloudflare R2) — ticket + email attachments
+      R2_ACCOUNT_ID: ${SUPPORTCRAFT_R2_ACCOUNT_ID}
+      R2_ACCESS_KEY_ID: ${SUPPORTCRAFT_R2_ACCESS_KEY_ID}
+      R2_SECRET_ACCESS_KEY: ${SUPPORTCRAFT_R2_SECRET_ACCESS_KEY}
+      R2_BUCKET: ${SUPPORTCRAFT_R2_BUCKET}
+      R2_PUBLIC_URL: ${SUPPORTCRAFT_R2_PUBLIC_URL}
+      # Supabase — still backs business data (tickets/KB/admin) and the inbound
+      # email pipeline; only auth and file storage have moved off it so far
+      SUPABASE_SERVICE_ROLE_KEY: ${SUPPORTCRAFT_SUPABASE_SERVICE_ROLE_KEY}
+      INBOUND_SECRET: ${SUPPORTCRAFT_INBOUND_SECRET}
       # AI provider
-      AI_PROVIDER: "openai"
-      OPENAI_API_KEY: "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"
-      ANTHROPIC_API_KEY: "aaa"
+      AI_PROVIDER: ${SUPPORTCRAFT_AI_PROVIDER}
+      OPENAI_API_KEY: ${SUPPORTCRAFT_OPENAI_API_KEY}
+      ANTHROPIC_API_KEY: ${SUPPORTCRAFT_ANTHROPIC_API_KEY}
       # Email
-      EMAIL_PROVIDER: "resend"
-      SENDING_DOMAIN: "supportcraft.aakasa.dev"
-      EMAIL_FROM: "supportcraft@aakasa.dev"
-      GMAIL_CLIENT_ID: "419756706827-ubf2djt62lq2k46p9cmf4atcpi81dgb1.apps.googleusercontent.com"
-      GMAIL_CLIENT_SECRET: "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"
-      GMAIL_REFRESH_TOKEN: "1//0gYpE2jxK_tlhCgYIARAAGBASNwF-L9IrIMnzNSkiKABE2SgJXHBwp7Ei16BURlz49_6M66yPza2pr49-B15IXK6C6S7HOweQIQE"
-      RESEND_API_KEY: "re_bub9EXLX_DAAicUKB2HBkZ1ttaYMjD3cq"
-      RESEND_FROM_EMAIL: "supportcraft@aakasa.dev"
-      RESEND_FROM_NAME: "SupportCraft AI"
+      EMAIL_PROVIDER: ${SUPPORTCRAFT_EMAIL_PROVIDER}
+      SENDING_DOMAIN: ${SUPPORTCRAFT_SENDING_DOMAIN}
+      EMAIL_FROM: ${SUPPORTCRAFT_EMAIL_FROM}
+      GMAIL_CLIENT_ID: ${SUPPORTCRAFT_GMAIL_CLIENT_ID}
+      GMAIL_CLIENT_SECRET: ${SUPPORTCRAFT_GMAIL_CLIENT_SECRET}
+      GMAIL_REFRESH_TOKEN: ${SUPPORTCRAFT_GMAIL_REFRESH_TOKEN}
+      RESEND_API_KEY: ${SUPPORTCRAFT_RESEND_API_KEY}
+      RESEND_FROM_EMAIL: ${SUPPORTCRAFT_RESEND_FROM_EMAIL}
+      RESEND_FROM_NAME: ${SUPPORTCRAFT_RESEND_FROM_NAME}
       # PayPal
-      PAYPAL_CLIENT_ID: "BAAo_zAcqFHBIpk4qErmJXv6tHTuR5xFjyrKF12k1iNY6-vyz_IB2QRP1PgbfyeNhXRC4xMkhQEw_05SaU"
-      PAYPAL_CLIENT_SECRET: "EPbdOEL56jXz7lTWrh3iI8IONz2JFr72FFrIwsPNR3WZ84Bxq-BvVnseKTeUygSE7QPxMY4HNgRmAvsS"
-      PAYPAL_API_URL: "https://api-m.paypal.com"
-      PAYPAL_WEBHOOK_ID: "7BW08300S9888770T"
+      PAYPAL_CLIENT_ID: ${SUPPORTCRAFT_PAYPAL_CLIENT_ID}
+      PAYPAL_CLIENT_SECRET: ${SUPPORTCRAFT_PAYPAL_CLIENT_SECRET}
+      PAYPAL_API_URL: ${SUPPORTCRAFT_PAYPAL_API_URL}
+      PAYPAL_WEBHOOK_ID: ${SUPPORTCRAFT_PAYPAL_WEBHOOK_ID}
       # Server-side plan IDs (used by webhook to map subscription → DB plan)
-      PAYPAL_PLAN_ID_FREELANCER_MONTHLY: "P-4RR91896KH036330NNJB7PPQ"
-      PAYPAL_PLAN_ID_PRO: "P-48T71646GW126633SNJB7P6Q"
-      PAYPAL_PLAN_ID_BUSINESS: "P-1FK55921B97338714NJB7TGY"
-      PAYPAL_PLAN_ID_AGENCY: "P-4AW65443X39104818NJB7TUI"
-      PAYPAL_PLAN_ID_FREELANCER_YEARLY: "P-5RA02850GN116015TNJB7UDI"
-      PAYPAL_PLAN_ID_PRO_YEARLY: "P-3ML00298HU3691007NJB7URI"
-      PAYPAL_PLAN_ID_BUSINESS_YEARLY: "P-96F27768NK747754BNJB7VBI"
-      PAYPAL_PLAN_ID_AGENCY_YEARLY: "P-22T60596EP922525SNJB7VRY"
+      PAYPAL_PLAN_ID_FREELANCER_MONTHLY: ${SUPPORTCRAFT_PAYPAL_PLAN_ID_FREELANCER_MONTHLY}
+      PAYPAL_PLAN_ID_PRO: ${SUPPORTCRAFT_PAYPAL_PLAN_ID_PRO}
+      PAYPAL_PLAN_ID_BUSINESS: ${SUPPORTCRAFT_PAYPAL_PLAN_ID_BUSINESS}
+      PAYPAL_PLAN_ID_AGENCY: ${SUPPORTCRAFT_PAYPAL_PLAN_ID_AGENCY}
+      PAYPAL_PLAN_ID_FREELANCER_YEARLY: ${SUPPORTCRAFT_PAYPAL_PLAN_ID_FREELANCER_YEARLY}
+      PAYPAL_PLAN_ID_PRO_YEARLY: ${SUPPORTCRAFT_PAYPAL_PLAN_ID_PRO_YEARLY}
+      PAYPAL_PLAN_ID_BUSINESS_YEARLY: ${SUPPORTCRAFT_PAYPAL_PLAN_ID_BUSINESS_YEARLY}
+      PAYPAL_PLAN_ID_AGENCY_YEARLY: ${SUPPORTCRAFT_PAYPAL_PLAN_ID_AGENCY_YEARLY}
       # Google OAuth (Sign-In)
-      GOOGLE_CLIENT_ID: "852419689327-jmug6djo9mujfnqagr6kep5uhnopr4r9.apps.googleusercontent.com"
-      GOOGLE_CLIENT_SECRET: "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"
+      GOOGLE_CLIENT_ID: ${SUPPORTCRAFT_GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${SUPPORTCRAFT_GOOGLE_CLIENT_SECRET}
       # Misc
-      CRON_SECRET: "6ffc7661cabfcf188b0de8d93088b6e6adff73ab566dcd8ed8bfe0855a6c600a"
-      ADMIN_EMAILS: "brayan@aakasa.dev"
+      CRON_SECRET: ${SUPPORTCRAFT_CRON_SECRET}
+      ADMIN_EMAILS: ${SUPPORTCRAFT_ADMIN_EMAILS}
     networks:
       - aakasa-net
 
@@ -167,48 +185,134 @@ services:
       dockerfile: Dockerfile
       args:
         # These are embedded into the JS bundle at build time
-        NEXT_PUBLIC_SUPABASE_URL: "https://aiuobinwyywcqplflyqz.supabase.co"
-        NEXT_PUBLIC_SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFpdW9iaW53eXl3Y3FwbGZseXF6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMwNTg2NDgsImV4cCI6MjA5ODYzNDY0OH0.1ntNsWvzX2jlFGljKJR-UDar1B-LeErVUpn4RpMFC0w"
-        NEXT_PUBLIC_APP_URL: "https://taskcraft.aakasa.dev"
-        NEXT_PUBLIC_PAYPAL_CLIENT_ID: "BAAo_zAcqFHBIpk4qErmJXv6tHTuR5xFjyrKF12k1iNY6-vyz_IB2QRP1PgbfyeNhXRC4xMkhQEw_05SaU"
+        NEXT_PUBLIC_SUPABASE_URL: ${TASKCRAFT_SUPABASE_URL}
+        NEXT_PUBLIC_SUPABASE_ANON_KEY: ${TASKCRAFT_SUPABASE_ANON_KEY}
+        NEXT_PUBLIC_APP_URL: ${TASKCRAFT_APP_URL}
+        NEXT_PUBLIC_PAYPAL_CLIENT_ID: ${TASKCRAFT_PAYPAL_CLIENT_ID}
         # Plan IDs baked into JS bundle for PayPal subscription buttons
-        NEXT_PUBLIC_PAYPAL_PLAN_ID_SOLO_MONTHLY: "P-5RS62283GN226741RNJD5HOY"
-        NEXT_PUBLIC_PAYPAL_PLAN_ID_SOLO_YEARLY: "P-5FA46031BH181530BNJD5IGQ"
-        NEXT_PUBLIC_PAYPAL_PLAN_ID_TEAM_MONTHLY: "P-9YW22138HW0130325NJD5HZI"
-        NEXT_PUBLIC_PAYPAL_PLAN_ID_TEAM_YEARLY: "P-2BM328175E004452HNJD5IQA"
+        NEXT_PUBLIC_PAYPAL_PLAN_ID_SOLO_MONTHLY: ${TASKCRAFT_PAYPAL_PLAN_ID_SOLO_MONTHLY}
+        NEXT_PUBLIC_PAYPAL_PLAN_ID_SOLO_YEARLY: ${TASKCRAFT_PAYPAL_PLAN_ID_SOLO_YEARLY}
+        NEXT_PUBLIC_PAYPAL_PLAN_ID_TEAM_MONTHLY: ${TASKCRAFT_PAYPAL_PLAN_ID_TEAM_MONTHLY}
+        NEXT_PUBLIC_PAYPAL_PLAN_ID_TEAM_YEARLY: ${TASKCRAFT_PAYPAL_PLAN_ID_TEAM_YEARLY}
     restart: unless-stopped
     environment:
       NODE_ENV: production
       # Supabase
-      SUPABASE_SERVICE_ROLE_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFpdW9iaW53eXl3Y3FwbGZseXF6Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4MzA1ODY0OCwiZXhwIjoyMDk4NjM0NjQ4fQ.gLWwaTZzvCNGRAGEuua2UBunTobBUko0IyBb6iIjhZo"
+      SUPABASE_SERVICE_ROLE_KEY: ${TASKCRAFT_SUPABASE_SERVICE_ROLE_KEY}
       # OpenAI
-      OPENAI_API_KEY: "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"
+      OPENAI_API_KEY: ${TASKCRAFT_OPENAI_API_KEY}
       # PayPal
-      PAYPAL_CLIENT_ID: "BAAo_zAcqFHBIpk4qErmJXv6tHTuR5xFjyrKF12k1iNY6-vyz_IB2QRP1PgbfyeNhXRC4xMkhQEw_05SaU"
-      PAYPAL_CLIENT_SECRET: "EPbdOEL56jXz7lTWrh3iI8IONz2JFr72FFrIwsPNR3WZ84Bxq-BvVnseKTeUygSE7QPxMY4HNgRmAvsS"
-      PAYPAL_API_URL: "https://api-m.paypal.com"
-      PAYPAL_WEBHOOK_ID: "4FL55530DP533162Y"
+      PAYPAL_CLIENT_ID: ${TASKCRAFT_PAYPAL_CLIENT_ID}
+      PAYPAL_CLIENT_SECRET: ${TASKCRAFT_PAYPAL_CLIENT_SECRET}
+      PAYPAL_API_URL: ${TASKCRAFT_PAYPAL_API_URL}
+      PAYPAL_WEBHOOK_ID: ${TASKCRAFT_PAYPAL_WEBHOOK_ID}
       # Server-side plan IDs (used by webhook to map subscription → DB plan)
-      PAYPAL_PLAN_ID_SOLO_MONTHLY: "P-5RS62283GN226741RNJD5HOY"
-      PAYPAL_PLAN_ID_SOLO_YEARLY: "P-5FA46031BH181530BNJD5IGQ"
-      PAYPAL_PLAN_ID_TEAM_MONTHLY: "P-9YW22138HW0130325NJD5HZI"
-      PAYPAL_PLAN_ID_TEAM_YEARLY: "P-2BM328175E004452HNJD5IQA"
+      PAYPAL_PLAN_ID_SOLO_MONTHLY: ${TASKCRAFT_PAYPAL_PLAN_ID_SOLO_MONTHLY}
+      PAYPAL_PLAN_ID_SOLO_YEARLY: ${TASKCRAFT_PAYPAL_PLAN_ID_SOLO_YEARLY}
+      PAYPAL_PLAN_ID_TEAM_MONTHLY: ${TASKCRAFT_PAYPAL_PLAN_ID_TEAM_MONTHLY}
+      PAYPAL_PLAN_ID_TEAM_YEARLY: ${TASKCRAFT_PAYPAL_PLAN_ID_TEAM_YEARLY}
       # Google OAuth (custom PKCE flow)
-      GOOGLE_AUTH_FLOW: "custom"
-      GOOGLE_CLIENT_ID: "626524144963-agd5fh31cgnhgsrh63uj7ugq83lio4tb.apps.googleusercontent.com"
-      GOOGLE_CLIENT_SECRET: "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"
+      GOOGLE_AUTH_FLOW: ${TASKCRAFT_GOOGLE_AUTH_FLOW}
+      GOOGLE_CLIENT_ID: ${TASKCRAFT_GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${TASKCRAFT_GOOGLE_CLIENT_SECRET}
       # Misc
-      ADMIN_EMAILS: "brayan@aakasa.dev"
-      CRON_SECRET: "70d81a77f60be7778790ad15662b7b1e5d1762345ecedc00196e39adc9d0f30a"
+      ADMIN_EMAILS: ${TASKCRAFT_ADMIN_EMAILS}
+      CRON_SECRET: ${TASKCRAFT_CRON_SECRET}
       # Email
-      RESEND_API_KEY: "re_bub9EXLX_DAAicUKB2HBkZ1ttaYMjD3cq"
-      RESEND_FROM_EMAIL: "taskcraft@aakasa.dev"
-      RESEND_FROM_NAME: "TaskCraft AI"
+      RESEND_API_KEY: ${TASKCRAFT_RESEND_API_KEY}
+      RESEND_FROM_EMAIL: ${TASKCRAFT_RESEND_FROM_EMAIL}
+      RESEND_FROM_NAME: ${TASKCRAFT_RESEND_FROM_NAME}
       # Internal Docker service URLs — bypasses nginx/public hostname for container-to-container calls
       BILLCRAFT_INTERNAL_URL: "http://billcraft:3000/api"
       SUPPORTCRAFT_INTERNAL_URL: "http://supportcraft:3002/api/v1"
     networks:
       - aakasa-net
+
+  # ── MeetingCraft ─────────────────────────────────────────────────────────────
+  meetingcraft:
+    build:
+      context: ../MeetingCraft
+      dockerfile: Dockerfile
+      args:
+        # These are embedded into the JS bundle at build time
+        NEXT_PUBLIC_SUPABASE_URL: ${MEETINGCRAFT_SUPABASE_URL}
+        NEXT_PUBLIC_SUPABASE_ANON_KEY: ${MEETINGCRAFT_SUPABASE_ANON_KEY}
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      # Supabase
+      SUPABASE_SERVICE_ROLE_KEY: ${MEETINGCRAFT_SUPABASE_SERVICE_ROLE_KEY}
+      # Redis (Upstash)
+      REDIS_URL: ${MEETINGCRAFT_REDIS_URL}
+      # App
+      APP_URL: ${MEETINGCRAFT_APP_URL}
+      # AWS KMS — envelope-encrypts OAuth refresh tokens
+      AWS_REGION: ${MEETINGCRAFT_AWS_REGION}
+      AWS_KMS_KEY_ARN: ${MEETINGCRAFT_AWS_KMS_KEY_ARN}
+      AWS_ACCESS_KEY_ID: ${MEETINGCRAFT_AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${MEETINGCRAFT_AWS_SECRET_ACCESS_KEY}
+      # Google Calendar OAuth2
+      GOOGLE_OAUTH_CLIENT_ID: ${MEETINGCRAFT_GOOGLE_OAUTH_CLIENT_ID}
+      GOOGLE_OAUTH_CLIENT_SECRET: ${MEETINGCRAFT_GOOGLE_OAUTH_CLIENT_SECRET}
+      GOOGLE_CALENDAR_WEBHOOK_SECRET: ${MEETINGCRAFT_GOOGLE_CALENDAR_WEBHOOK_SECRET}
+      # Google Sign-In (separate OAuth client from Calendar)
+      GOOGLE_LOGIN_CLIENT_ID: ${MEETINGCRAFT_GOOGLE_LOGIN_CLIENT_ID}
+      GOOGLE_LOGIN_CLIENT_SECRET: ${MEETINGCRAFT_GOOGLE_LOGIN_CLIENT_SECRET}
+      # Zoom OAuth2
+      ZOOM_OAUTH_CLIENT_ID: ${MEETINGCRAFT_ZOOM_OAUTH_CLIENT_ID}
+      ZOOM_OAUTH_CLIENT_SECRET: ${MEETINGCRAFT_ZOOM_OAUTH_CLIENT_SECRET}
+      # Microsoft Teams OAuth2
+      MS_TEAMS_OAUTH_CLIENT_ID: ${MEETINGCRAFT_MS_TEAMS_OAUTH_CLIENT_ID}
+      MS_TEAMS_OAUTH_CLIENT_SECRET: ${MEETINGCRAFT_MS_TEAMS_OAUTH_CLIENT_SECRET}
+      MS_TEAMS_OAUTH_TENANT_ID: ${MEETINGCRAFT_MS_TEAMS_OAUTH_TENANT_ID}
+      # Guest-facing booking management links
+      BOOKING_GUEST_TOKEN_SECRET: ${MEETINGCRAFT_BOOKING_GUEST_TOKEN_SECRET}
+      # Cron-triggered endpoints
+      CRON_SECRET: ${MEETINGCRAFT_CRON_SECRET}
+      # Email
+      RESEND_API_KEY: ${MEETINGCRAFT_RESEND_API_KEY}
+      RESEND_FROM_EMAIL: ${MEETINGCRAFT_RESEND_FROM_EMAIL}
+      RESEND_FROM_NAME: ${MEETINGCRAFT_RESEND_FROM_NAME}
+      # Misc
+      ADMIN_EMAILS: ${MEETINGCRAFT_ADMIN_EMAILS}
+      FEATURE_BILLING_ENABLED: ${MEETINGCRAFT_FEATURE_BILLING_ENABLED}
+    networks:
+      - aakasa-net
+
+  # Same image as `meetingcraft`, running the BullMQ reminder worker instead
+  # of the Next.js server (see MeetingCraft/src/worker.ts) — a separate
+  # container so a stuck or crashing job queue can never take the booking UI
+  # down with it, and vice versa. No exposed port: it never listens on HTTP.
+  meetingcraft-worker:
+    build:
+      context: ../MeetingCraft
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_SUPABASE_URL: ${MEETINGCRAFT_SUPABASE_URL}
+        NEXT_PUBLIC_SUPABASE_ANON_KEY: ${MEETINGCRAFT_SUPABASE_ANON_KEY}
+    restart: unless-stopped
+    command: ['npm', 'run', 'worker']
+    environment:
+      NODE_ENV: production
+      SUPABASE_SERVICE_ROLE_KEY: ${MEETINGCRAFT_SUPABASE_SERVICE_ROLE_KEY}
+      REDIS_URL: ${MEETINGCRAFT_REDIS_URL}
+      APP_URL: ${MEETINGCRAFT_APP_URL}
+      AWS_REGION: ${MEETINGCRAFT_AWS_REGION}
+      AWS_KMS_KEY_ARN: ${MEETINGCRAFT_AWS_KMS_KEY_ARN}
+      AWS_ACCESS_KEY_ID: ${MEETINGCRAFT_AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${MEETINGCRAFT_AWS_SECRET_ACCESS_KEY}
+      RESEND_API_KEY: ${MEETINGCRAFT_RESEND_API_KEY}
+      RESEND_FROM_EMAIL: ${MEETINGCRAFT_RESEND_FROM_EMAIL}
+      RESEND_FROM_NAME: ${MEETINGCRAFT_RESEND_FROM_NAME}
+      REMINDER_MINUTES_BEFORE: ${MEETINGCRAFT_REMINDER_MINUTES_BEFORE}
+      NO_SHOW_FEEDBACK_DELAY_MINUTES: ${MEETINGCRAFT_NO_SHOW_FEEDBACK_DELAY_MINUTES}
+    networks:
+      - aakasa-net
+    # The image's HEALTHCHECK checks an HTTP endpoint the worker never
+    # exposes — it has no server to check. `restart: unless-stopped` already
+    # recovers a crashed worker process.
+    healthcheck:
+      disable: true
 
   # ── PDF Merge ────────────────────────────────────────────────────────────────
   # Entirely client-side PDF processing — no database, no secrets. The only
@@ -218,7 +322,7 @@ services:
       context: ../PDFCraft
       dockerfile: Dockerfile
       args:
-        NEXT_PUBLIC_APP_URL: "https://pdfcraft.aakasa.dev"
+        NEXT_PUBLIC_APP_URL: ${PDFCRAFT_APP_URL}
     restart: unless-stopped
     environment:
       NODE_ENV: production
@@ -241,6 +345,7 @@ services:
       - supportcraft
       - taskcraft
       - pdfcraft
+      - meetingcraft
     networks:
       - aakasa-net
 
