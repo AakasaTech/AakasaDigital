@@ -4,6 +4,9 @@ import Image from 'next/image';
 const products = [
   { label: 'BillCraft AI — AI-powered invoicing', href: 'https://billcraft.aakasa.dev' },
   { label: 'SupportCraft AI — AI help desk', href: 'https://supportcraft.aakasa.dev' },
+  { label: 'TaskCraft AI — Task & time tracking', href: 'https://taskcraft.aakasa.dev' },
+  { label: 'PDFCraft — Browser-based PDF tools', href: 'https://pdfcraft.aakasa.dev' },
+  { label: 'Aakasa Tools — Free browser utilities', href: 'https://tools.aakasa.dev' },
 ];
 
 const companyLinks = [

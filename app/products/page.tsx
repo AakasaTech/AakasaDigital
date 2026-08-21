@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { ClipboardList, FileText, HeadphonesIcon } from 'lucide-react';
+import { ClipboardList, FileText, FileStack, HeadphonesIcon, Hammer } from 'lucide-react';
 import PageHeader from '@/components/PageHeader';
 import ProductCard from '@/components/ProductCard';
 import CTASection from '@/components/CTASection';
@@ -72,18 +72,62 @@ const taskcraftSchema = {
   },
 };
 
+const pdfcraftSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: 'PDFCraft',
+  applicationCategory: 'BusinessApplication',
+  operatingSystem: 'Web',
+  url: 'https://pdfcraft.aakasa.dev',
+  description:
+    'Merge, split, organize, convert, compress, and sign PDF files — entirely client-side, with nothing ever uploaded to a server.',
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'USD',
+    description: 'Free to use.',
+  },
+  author: {
+    '@type': 'Organization',
+    name: 'Aakasa Digital',
+    url: 'https://aakasa.dev',
+  },
+};
+
+const toolsSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: 'Aakasa Tools',
+  applicationCategory: 'UtilitiesApplication',
+  operatingSystem: 'Web',
+  url: 'https://tools.aakasa.dev',
+  description:
+    'A growing suite of free browser utilities — JSON formatter, password generator, image compressor, and more. Everything runs 100% client-side.',
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'USD',
+    description: 'Free to use.',
+  },
+  author: {
+    '@type': 'Organization',
+    name: 'Aakasa Digital',
+    url: 'https://aakasa.dev',
+  },
+};
+
 export const metadata: Metadata = {
   title: 'Products',
   description:
-    "Explore Aakasa Digital's AI-powered SaaS products — BillCraft AI for invoicing, SupportCraft AI for customer support, and TaskCraft AI for task and time tracking. Built for freelancers, startups, and small businesses.",
+    "Explore Aakasa Digital's AI-powered SaaS products — BillCraft AI for invoicing, SupportCraft AI for customer support, TaskCraft AI for task and time tracking, PDFCraft for PDF tools, and Aakasa Tools for free browser utilities. Built for freelancers, startups, and small businesses.",
   openGraph: {
     title:       'Products | Aakasa Digital',
-    description: "Explore Aakasa Digital's AI-powered SaaS products — BillCraft AI, SupportCraft AI, and TaskCraft AI. Built for freelancers, startups, and small businesses.",
+    description: "Explore Aakasa Digital's AI-powered SaaS products — BillCraft AI, SupportCraft AI, TaskCraft AI, PDFCraft, and Aakasa Tools. Built for freelancers, startups, and small businesses.",
     url:         'https://aakasa.dev/products',
   },
   twitter: {
     title:       'Products | Aakasa Digital',
-    description: "Explore Aakasa Digital's AI-powered SaaS products — BillCraft AI, SupportCraft AI, and TaskCraft AI. Built for freelancers, startups, and small businesses.",
+    description: "Explore Aakasa Digital's AI-powered SaaS products — BillCraft AI, SupportCraft AI, TaskCraft AI, PDFCraft, and Aakasa Tools. Built for freelancers, startups, and small businesses.",
   },
 };
 
@@ -121,12 +165,34 @@ const products = [
     gradient: 'linear-gradient(135deg, #A78BFA 0%, #7C3AED 100%)',
     badge:    'Live',
   },
+  {
+    name:        'PDFCraft',
+    tagline:     'Every PDF tool you need, right in your browser.',
+    description:
+      'Merge, split, organize, convert, compress, and sign PDF files — entirely client-side, with nothing ever uploaded to a server. Built for anyone who needs quick, private PDF edits.',
+    url:      'https://pdfcraft.aakasa.dev',
+    cta:      'Visit PDFCraft',
+    icon:     <FileStack className="h-6 w-6" />,
+    gradient: 'linear-gradient(135deg, #0A1C50 0%, #1D8CFF 100%)',
+    badge:    'Live',
+  },
+  {
+    name:        'Aakasa Tools',
+    tagline:     'Every tool you need, 100% in your browser.',
+    description:
+      'A growing suite of free browser utilities — JSON formatter, password generator, image compressor, and more. Nothing you paste or upload ever leaves your browser.',
+    url:      'https://tools.aakasa.dev',
+    cta:      'Visit Aakasa Tools',
+    icon:     <Hammer className="h-6 w-6" />,
+    gradient: 'linear-gradient(135deg, #F59E0B 0%, #D97706 100%)',
+    badge:    'Live',
+  },
 ];
 
 export default function ProductsPage() {
   return (
     <>
-      <JsonLd schema={[billcraftSchema, supportcraftSchema, taskcraftSchema]} />
+      <JsonLd schema={[billcraftSchema, supportcraftSchema, taskcraftSchema, pdfcraftSchema, toolsSchema]} />
       <PageHeader
         badge="All Products"
         title="Our Software Products"

@@ -10,6 +10,7 @@ import {
   FileStack,
   HeadphonesIcon,
   Globe,
+  Hammer,
 } from 'lucide-react';
 import HeroSection from '@/components/HeroSection';
 import ProductCard from '@/components/ProductCard';
@@ -80,6 +81,24 @@ const products = [
     cta:      'Visit PDFCraft',
     icon:     <FileStack className="h-6 w-6" />,
     gradient: 'linear-gradient(135deg, #0A1C50 0%, #1D8CFF 100%)',
+    badge:    'Live',
+  },
+  {
+    name:        'Aakasa Tools',
+    tagline:     'Every tool you need, 100% in your browser.',
+    description:
+      'A growing suite of free browser utilities — JSON formatter, password generator, image compressor, and more. Nothing you paste or upload ever leaves your browser.',
+    features: [
+      'JSON formatter & validator',
+      'Password generator',
+      'UUID & hash generator',
+      'Image compressor & converter',
+      '100% client-side — no uploads, no accounts',
+    ],
+    url:      'https://tools.aakasa.dev',
+    cta:      'Visit Aakasa Tools',
+    icon:     <Hammer className="h-6 w-6" />,
+    gradient: 'linear-gradient(135deg, #F59E0B 0%, #D97706 100%)',
     badge:    'Live',
   },
 ];
